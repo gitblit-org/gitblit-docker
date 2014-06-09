@@ -3,7 +3,7 @@
 from ubuntu:latest
 maintainer James Moger <james.moger@gitblit.com>
 run apt-get update
-run apt-get install -q -y git-core
+run apt-get install -q -y git-core redis-server
 
 # Install Java 7
 
@@ -17,7 +17,7 @@ run DEBIAN_FRONTEND=noninteractive apt-get install oracle-java7-installer -y
 # Install Gitblit
 
 run apt-get install -q -y curl
-run curl -Lks https://github.com/gitblit/gitblit/releases/download/v1.3.2/gitblit-1.3.2.tar.gz -o /root/gitblit.tar.gz
+run curl -Lks http://dl.bintray.com/gitblit/releases/gitblit-1.5.1.tar.gz -o /root/gitblit.tar.gz
 run mkdir -p /opt/gitblit
 run tar zxf /root/gitblit.tar.gz -C /opt/gitblit
 run rm -f /root/gitblit.tar.gz
@@ -27,15 +27,13 @@ run mkdir -p /opt/gitblit-data
 run mv /opt/gitblit/data/* /opt/gitblit-data
 run mv /opt/gitblit-data/gitblit.properties /opt/gitblit-data/default.properties
 
-# Adjust the default Gitblit settings to bind to 80, 443, 9418, and allow RPC administration.
+# Adjust the default Gitblit settings to bind to 80, 443, 9418, 29418, and allow RPC administration.
 #
 # Note: we are writing to a different file here because sed doesn't like to the same file it
 # is streaming.  This is why the original properties file was renamed earlier.
-run sed -e "s/git\.daemonBindInterface\s=\slocalhost/git\.daemonBindInterface=/" \
-        -e "s/server\.httpsBindInterface\s=\slocalhost/server\.httpsBindInterface=/" \
-        -e "s/server\.httpBindInterface\s=\slocalhost/server\.httpBindInterface=/" \
-        -e "s/server\.httpsPort\s=\s8443/server\.httpsPort=443/" \
+run sed -e "s/server\.httpsPort\s=\s8443/server\.httpsPort=443/" \
         -e "s/server\.httpPort\s=\s0/server\.httpPort=80/" \
+        -e "s/server\.redirectToHttpsPort\s=\sfalse/server\.redirectToHttpsPort=true/" \
         -e "s/web\.enableRpcManagement\s=\sfalse/web\.enableRpcManagement=true/" \
         -e "s/web\.enableRpcAdministration\s=\sfalse/web.enableRpcAdministration=true/" \
         /opt/gitblit-data/default.properties > /opt/gitblit-data/gitblit.properties
@@ -45,4 +43,5 @@ workdir /opt/gitblit
 expose 80
 expose 443
 expose 9418
+expose 29418
 cmd ["java", "-server", "-Xmx1024M", "-Djava.awt.headless=true", "-jar", "/opt/gitblit/gitblit.jar", "--baseFolder", "/opt/gitblit-data"]

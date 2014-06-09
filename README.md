@@ -2,15 +2,15 @@
 
 ## Running Gitblit in Docker
 
-You can use the Gitblit Docker image I have created [here](https://index.docker.io/u/jmoger/gitblit).
+You can use the Gitblit Docker image I have created [here](https://registry.hub.docker.com/u/jmoger/gitblit).
 
 ```
 sudo docker pull jmoger/gitblit
 <wait a while>
-sudo docker run -d -name gitblit -p 443:443 -p 80:80 -p 9418:9418 jmoger/gitblit
+sudo docker run -d -name gitblit -p 443:443 -p 80:80 -p 9418:9418 -p 29418:29418 jmoger/gitblit
 ```
 
-The followings commands should retrieve and execute the Gitblit image and launch Gitblit in a Docker container that serves the web ui on ports 80 and 443.  Your repositories will also be accessible via http, https, and the git procotol.  The RPC administration interface has also been enabled so that you may use the Gitblit Manager to configure settings, manage repositories, or manage users.
+The followings commands should retrieve and execute the Gitblit image and launch Gitblit in a Docker container that serves the web ui on ports 80 and 443.  Your repositories will also be accessible via ssh, http, https, and the git procotol.  The RPC administration interface has also been enabled so that you may use the Gitblit Manager to configure settings, manage repositories, or manage users.
 
 You should be able to browse to http://localhost or https://localhost and login as `admin/admin`.
 
@@ -41,10 +41,10 @@ git clone https://bitbucket.org/jmoger/gitblit-docker.git
 ### Build your Docker container
 ```
 cd gitblit-docker
-sudo docker build -t jmoger/gitblit:1.3.2 .
+sudo docker build -t jmoger/gitblit:1.5.1 .
 ```
 ### Run your Gitblit container and setup localhost port-forwarding (*-p localhost:container*)
 ```
-sudo docker run -d -name gitblit -p 443:443 -p 80:80 -p 9418:9418 jmoger/gitblit:1.3.2
+sudo docker run -d --name gitblit -p 443:443 -p 80:80 -p 9418:9418 -p 29418:29418 jmoger/gitblit:1.5.1
 ```
 
