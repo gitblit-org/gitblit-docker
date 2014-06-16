@@ -17,7 +17,7 @@ run DEBIAN_FRONTEND=noninteractive apt-get install oracle-java7-installer -y
 # Install Gitblit
 
 run apt-get install -q -y curl
-run curl -Lks http://dl.bintray.com/gitblit/releases/gitblit-1.5.1.tar.gz -o /root/gitblit.tar.gz
+run curl -Lks http://dl.bintray.com/gitblit/releases/gitblit-1.6.0.tar.gz -o /root/gitblit.tar.gz
 run mkdir -p /opt/gitblit
 run tar zxf /root/gitblit.tar.gz -C /opt/gitblit
 run rm -f /root/gitblit.tar.gz
