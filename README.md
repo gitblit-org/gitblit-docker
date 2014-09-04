@@ -41,7 +41,7 @@ git clone https://github.com/gitblit/gitblit-docker.git
 ### Build your Docker container
 ```
 cd gitblit-docker
-sudo docker.io build -t jmoger/gitblit:1.5.1 .
+sudo docker.io build -t jmoger/gitblit:1.6.0 .
 ```
 ### Run your Gitblit container and setup localhost port-forwarding (*-p localhost:container*)
 ```
