@@ -13,7 +13,7 @@ You can use the Gitblit Docker image I have created [here](https://registry.hub.
 ```
 sudo docker.io pull jmoger/gitblit
 <wait a while>
-sudo docker.io run -d -name gitblit -p 443:443 -p 80:80 -p 9418:9418 -p 29418:29418 jmoger/gitblit
+sudo docker.io run -d --name gitblit -p 443:443 -p 80:80 -p 9418:9418 -p 29418:29418 jmoger/gitblit
 ```
 
 The followings commands should retrieve and execute the Gitblit image and launch Gitblit in a Docker container that serves the web ui on ports 80 and 443.  Your repositories will also be accessible via ssh, http, https, and the git procotol.  The RPC administration interface has also been enabled so that you may use the Gitblit Manager to configure settings, manage repositories, or manage users.
