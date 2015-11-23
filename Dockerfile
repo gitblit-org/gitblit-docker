@@ -17,26 +17,28 @@ run DEBIAN_FRONTEND=noninteractive apt-get install oracle-java7-installer -y
 # Install Gitblit
 
 run apt-get install -q -y curl
-run curl -Lks http://dl.bintray.com/gitblit/releases/gitblit-1.6.2.tar.gz -o /root/gitblit.tar.gz
-run mkdir -p /opt/gitblit
-run tar zxf /root/gitblit.tar.gz -C /opt/gitblit
+run curl -Lks http://dl.bintray.com/gitblit/releases/gitblit-1.7.0.tar.gz -o /root/gitblit.tar.gz
+run mkdir -p /opt/gitblit-tmp
+run tar zxf /root/gitblit.tar.gz -C /opt/gitblit-tmp
+run mv /opt/gitblit-tmp/gitblit-1.7.0 /opt/gitblit
+run rm -rf /opt/gitblit-tmp
 run rm -f /root/gitblit.tar.gz
 
 # Move the data files to a separate directory
 run mkdir -p /opt/gitblit-data
+
 run mv /opt/gitblit/data/* /opt/gitblit-data
-run mv /opt/gitblit-data/gitblit.properties /opt/gitblit-data/default.properties
 
 # Adjust the default Gitblit settings to bind to 80, 443, 9418, 29418, and allow RPC administration.
 #
 # Note: we are writing to a different file here because sed doesn't like to the same file it
 # is streaming.  This is why the original properties file was renamed earlier.
-run sed -e "s/server\.httpsPort\s=\s8443/server\.httpsPort=443/" \
-        -e "s/server\.httpPort\s=\s0/server\.httpPort=80/" \
-        -e "s/server\.redirectToHttpsPort\s=\sfalse/server\.redirectToHttpsPort=true/" \
-        -e "s/web\.enableRpcManagement\s=\sfalse/web\.enableRpcManagement=true/" \
-        -e "s/web\.enableRpcAdministration\s=\sfalse/web.enableRpcAdministration=true/" \
-        /opt/gitblit-data/default.properties > /opt/gitblit-data/gitblit.properties
+
+run echo "server.httpPort=80" >> /opt/gitblit-data/gitblit.properties
+run echo "server.httpsPort=443" >> /opt/gitblit-data/gitblit.properties
+run echo "server.redirectToHttpsPort=true" >> /opt/gitblit-data/gitblit.properties
+run echo "web.enableRpcManagement=true" >> /opt/gitblit-data/gitblit.properties
+run echo "web.enableRpcAdministration=true" >> /opt/gitblit-data/gitblit.properties
 
 # Setup the Docker container environment and run Gitblit
 workdir /opt/gitblit
