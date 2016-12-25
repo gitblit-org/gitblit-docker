@@ -11,16 +11,16 @@ run DEBIAN_FRONTEND=noninteractive apt-get install -q -y software-properties-com
 run DEBIAN_FRONTEND=noninteractive apt-get install -q -y python-software-properties
 run DEBIAN_FRONTEND=noninteractive apt-add-repository ppa:webupd8team/java -y
 run apt-get update
-run echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
-run DEBIAN_FRONTEND=noninteractive apt-get install oracle-java7-installer -y
+run echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+run DEBIAN_FRONTEND=noninteractive apt-get install oracle-java8-installer -y
 
 # Install Gitblit
 
 run apt-get install -q -y curl
-run curl -Lks http://dl.bintray.com/gitblit/releases/gitblit-1.7.0.tar.gz -o /root/gitblit.tar.gz
+run curl -Lks http://dl.bintray.com/gitblit/releases/gitblit-1.8.0.tar.gz -o /root/gitblit.tar.gz
 run mkdir -p /opt/gitblit-tmp
 run tar zxf /root/gitblit.tar.gz -C /opt/gitblit-tmp
-run mv /opt/gitblit-tmp/gitblit-1.7.0 /opt/gitblit
+run mv /opt/gitblit-tmp/gitblit-1.8.0 /opt/gitblit
 run rm -rf /opt/gitblit-tmp
 run rm -f /root/gitblit.tar.gz
 
