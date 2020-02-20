@@ -1,26 +1,35 @@
-from adoptopenjdk/openjdk8:alpine-slim as package
-label maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke<fzs>" \
-      author="Bala Raman <srbala [at] gmail.com>"
+FROM openjdk:8-jre-alpine
+
+ENV GITBLIT_VERSION 1.9.0
+ENV GITBLIT_DOWNLOAD_SHA 349302ded75edfed98f498576861210c0fe205a8721a254be65cdc3d8cdd76f1
+
+LABEL maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke <f.zschocke+gitblit@gmail.com>" \
+      author="Bala Raman <srbala [at] gmail.com>" \
+      org.label-schema.schema-version="1.0" \
+      org.label-schema.version="${GITBLIT_VERSION}"
+
+
+ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
+
 # Download and  Install Gitblit & Move the data files to a separate directory
-run set -eux; \
-    apk add --no-cache --virtual .fetch-deps curl; \
-    curl -LfsSo /root/gitblit.tar.gz https://github.com/gitblit/gitblit/releases/download/v1.9.0/gitblit-1.9.0.tar.gz && \
-    mkdir -p /opt/gitblit-tmp && \
-    tar zxf /root/gitblit.tar.gz -C /opt/gitblit-tmp && \
-    mv /opt/gitblit-tmp/gitblit-1.9.0 /opt/gitblit && \
-    rm -rf /opt/gitblit-tmp && \
-    rm -f /root/gitblit.tar.gz && \
-    mkdir -p /opt/gitblit-data && \
-    mv /opt/gitblit/data/* /opt/gitblit-data && \
-    echo "server.httpPort=80" >> /opt/gitblit-data/gitblit.properties && \
-    echo "server.httpsPort=443" >> /opt/gitblit-data/gitblit.properties && \
-    echo "server.redirectToHttpsPort=true" >> /opt/gitblit-data/gitblit.properties && \
-    echo "web.enableRpcManagement=true" >> /opt/gitblit-data/gitblit.properties && \
+RUN set -eux; \
+    wget -nv -O gitblit.tar.gz ${GITBLIT_DOWNLOAD_URL} ; \
+    echo "${GITBLIT_DOWNLOAD_SHA} *gitblit.tar.gz" | sha256sum -c - ; \
+    mkdir -p /opt/gitblit ; \
+    tar xzf gitblit.tar.gz -C /opt/gitblit --strip-components 1 ; \
+    rm -f gitblit.tar.gz ; \
+    mv /opt/gitblit/data /opt/gitblit-data ; \
+    ln -s /opt/gitblit-data /opt/gitblit/data ; \
+    echo "server.httpPort=80" >> /opt/gitblit-data/gitblit.properties ; \
+    echo "server.httpsPort=443" >> /opt/gitblit-data/gitblit.properties ; \
+    echo "server.redirectToHttpsPort=true" >> /opt/gitblit-data/gitblit.properties ; \
+    echo "web.enableRpcManagement=true" >> /opt/gitblit-data/gitblit.properties ; \
     echo "web.enableRpcAdministration=true" >> /opt/gitblit-data/gitblit.properties
 
-# Setup the Docker container environment and run Gitblit
-workdir /opt/gitblit
-# Adjust the default Gitblit settings to bind to 80, 443, 9418, 29418, and allow RPC administration.
-expose 80 443 9418 29418
+# Setup the Docker container environment
+WORKDIR /opt/gitblit
+
+EXPOSE 80 443 9418 29418
+
 # run application
-cmd ["java", "-server", "-Xmx1024M", "-Djava.awt.headless=true", "-cp", "gitblit.jar:ext/*", "com.gitblit.GitBlitServer", "--baseFolder", "/opt/gitblit-data"]
+CMD ["java", "-server", "-Xmx1024M", "-Djava.awt.headless=true", "-cp", "gitblit.jar:ext/*", "com.gitblit.GitBlitServer", "--baseFolder", "/opt/gitblit-data"]
