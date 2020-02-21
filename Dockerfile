@@ -24,8 +24,8 @@ RUN set -eux ; \
     rm -f gitblit.tar.gz ; \
     mv /opt/gitblit/data /opt/gitblit-data ; \
     ln -s /opt/gitblit-data /opt/gitblit/data ; \
-    echo "server.httpPort=80" >> /opt/gitblit-data/gitblit.properties ; \
-    echo "server.httpsPort=443" >> /opt/gitblit-data/gitblit.properties ; \
+    echo "server.httpPort=8080" >> /opt/gitblit-data/gitblit.properties ; \
+    echo "server.httpsPort=8443" >> /opt/gitblit-data/gitblit.properties ; \
     echo "server.redirectToHttpsPort=true" >> /opt/gitblit-data/gitblit.properties ; \
     echo "web.enableRpcManagement=true" >> /opt/gitblit-data/gitblit.properties ; \
     echo "web.enableRpcAdministration=true" >> /opt/gitblit-data/gitblit.properties
@@ -33,7 +33,7 @@ RUN set -eux ; \
 # Setup the Docker container environment
 WORKDIR /opt/gitblit
 
-EXPOSE 80 443 9418 29418
+EXPOSE 8080 8443 9418 29418
 
 # run application
 CMD ["java", "-server", "-Xmx1024M", "-Djava.awt.headless=true", "-cp", "gitblit.jar:ext/*", "com.gitblit.GitBlitServer", "--baseFolder", "/opt/gitblit-data"]
