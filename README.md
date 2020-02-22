@@ -8,8 +8,8 @@ These instructions assume you are running Linux and you have already [installed 
 You can use the official [Gitblit Docker image](https://hub.docker.com/r/gitblit/gitblit).
 
 ```
-sudo docker pull gitblit/gitblit
-sudo docker run -d --name gitblit -p 8443:8443 -p 8080:8080 -p 9418:9418 -p 29418:29418 gitblit/gitblit
+sudo docker pull gitblit/gitblit:rpc
+sudo docker run -d --name gitblit -p 8443:8443 -p 8080:8080 -p 9418:9418 -p 29418:29418 gitblit/gitblit:rpc
 ```
 
 The followings commands should retrieve and execute the Gitblit image and launch Gitblit in a Docker container that serves the web UI on ports 8080 and 8443.  Your repositories will also be accessible via ssh, http, https, and the git procotol.  The RPC administration interface has also been enabled so that you may use the Gitblit Manager to configure settings, manage repositories, or manage users.
@@ -27,8 +27,6 @@ sudo docker start gitblit
 ```
 
 ## Build Instructions
-
-Thanks to [Nicola Paolucci](https://blogs.atlassian.com/2013/11/docker-all-the-things-at-atlassian-automation-and-wiring/) at [Atlassian](https://atlassian.com) for the terrific [Stash](https://www.atlassian.com/stash) example.
 
 ### Clone this Repository
 ```
