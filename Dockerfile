@@ -4,7 +4,6 @@ ENV GITBLIT_VERSION 1.9.0
 ENV GITBLIT_DOWNLOAD_SHA 349302ded75edfed98f498576861210c0fe205a8721a254be65cdc3d8cdd76f1
 
 LABEL maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke <f.zschocke+gitblit@gmail.com>" \
-      author="Bala Raman <srbala [at] gmail.com>" \
       org.label-schema.schema-version="1.0" \
       org.label-schema.version="${GITBLIT_VERSION}"
 
@@ -25,7 +24,8 @@ RUN set -eux ; \
 
 
 # Move the data files to a separate directory and set some defaults
-RUN mv /opt/gitblit/data /opt/gitblit-data ; \
+RUN set -eux ; \
+    mv /opt/gitblit/data /opt/gitblit-data ; \
     ln -s /opt/gitblit-data /opt/gitblit/data ; \
 # Create a system.properties file that sets the defaults for this docker setup.
     echo "server.httpPort=8080" >> /opt/gitblit/system.properties ; \
@@ -70,10 +70,16 @@ include = defaults.properties,/opt/gitblit/system.properties,gitblit-docker.prop
 ''#\n\
 ''# Define your overrides or custom settings below\n\
 ''#\n\
-\n' > /opt/gitblit-data/gitblit.properties
+\n' > /opt/gitblit-data/gitblit.properties ; \
+\
+# Remove unneeded scripts.
+    rm -f /opt/gitblit/install-service-*.sh ; \
+    rm -r /opt/gitblit/service-*.sh ;
 
 
 # Setup the Docker container environment
+ENV PATH /opt/gitblit:$PATH
+
 WORKDIR /opt/gitblit
 
 EXPOSE 8080 8443 9418 29418

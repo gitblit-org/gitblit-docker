@@ -16,12 +16,12 @@ The followings commands should retrieve and execute the Gitblit image and launch
 
 You should be able to browse to http://localhost:8080 or https://localhost:8443 and login as `admin/admin`.
 
-You can stop your container with:
+You can shutdown your gitblit container with:
 ```
-sudo docker stop gitblit
+sudo docker exec -it gitblit gitblit-stop.sh
 ```
 
-You can manually start your container with:
+You can manually re-start your container with:
 ```
 sudo docker start gitblit
 ```

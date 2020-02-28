@@ -32,6 +32,20 @@ You can select which transports you want to make available from the container. F
 sudo docker run -d --name gitblit -p 8443:8443 -p 29418:29418 gitblit/gitblit:rpc
 ```
 
+### Stop the container
+
+Gitblit can be shut down cleanly with the `gitblit-stop.h` script.
+
+```console
+sudo docker exec -it gitblit gitblit-stop.sh
+```
+
+You can also stop the container with a normal stop command.
+
+```console
+sudo docker stop gitblit
+```
+
 
 # Image Variants
 The `gitblit/gitblit` images come in multiple flavors, each designed for a specific use case.
