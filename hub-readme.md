@@ -15,6 +15,8 @@ Gitblit can be used without any other Git tooling or it can cooperate with your 
 
 # How to use this image
 
+## Start a Gitblit instance
+
 You can simply start serving git repositories by running a container from a provided image.
 
 ```console
@@ -22,29 +24,86 @@ sudo docker pull gitblit/gitblit:rpc
 sudo docker run -d --name gitblit -p 8443:8443 -p 8080:8080 -p 9418:9418 -p 29418:29418 gitblit/gitblit:rpc
 ```
 
-This will launch Gitblit serving the web UI on ports 8080 (HTTP) and 8443 (HTTPS).  Your repositories will also be accessible via SSH (29418), HTTP, HTTPS, and the GIT (9418) procotol.  The RPC administration interface has been enabled for the `*-rpc`images so that you may use the Gitblit Manager to configure settings, manage repositories, or manage users.
+This will launch Gitblit serving the web UI on ports 8080 (HTTP) and 8443 (HTTPS). Your repositories will
+also be accessible via SSH (29418), HTTP, HTTPS, and the GIT (9418) procotol. A container is started with
+the name `gitblit` using the provided image `gitblit/gitblit:rpc`.  
+The RPC administration interface has been enabled for the `*-rpc`images so that you may use the Gitblit Manager
+to configure settings, manage repositories, or manage users.
 
-Browse to http://localhost:8080 or https://localhost:8443 and login as `admin/admin`.
+Browse to http://localhost:8080 or https://localhost:8443 and login as `admin` with password `admin`.
 
-You can select which transports you want to make available from the container. For example, if you only want to use HTTPS and SSH, run:
+The default Gitblit Docker images define all transports used by Gitblit, but that does not mean, that they are
+available from oustside the container. To make a port available to the outside world, use the `-p` commandline
+parameter. For example, if you only want to use HTTPS and SSH, run:
 
 ```console
-sudo docker run -d --name gitblit -p 8443:8443 -p 29418:29418 gitblit/gitblit:rpc
+$ sudo docker run -d --name gitblit -p 8443:8443 -p 29418:29418 gitblit/gitblit:rpc
 ```
 
-### Stop the container
+
+## Stop the instance
 
 Gitblit can be shut down cleanly with the `gitblit-stop.h` script.
 
 ```console
-sudo docker exec -it gitblit gitblit-stop.sh
+$ sudo docker exec -it gitblit gitblit-stop.sh
 ```
 
-You can also stop the container with a normal stop command.
+You can also stop the container with the Docker stop command.
 
 ```console
-sudo docker stop gitblit
+$ sudo docker stop gitblit
 ```
+
+
+## Gitblit data storage
+
+Gitblit stores two types of data, configuration data and Git repository data. While configuration data is
+relatively static, once the server is configured and has started, the repository data is what you use
+Gitblit for and is written often (unless you use Gitblit only as a repository browser). The docker image
+uses `/var/opt/gitblit` as the base folder for data storage.
+
+To make this data persistent and operation on it more performant, a Docker [volume](https://docs.docker.com/engine/reference/builder/#volume)
+is defined for this path. [Docker manages this volume](https://docs.docker.com/storage/volumes/) automatically
+for you. This is the default and the easiest configuration. The only downside is that the files may be hard to
+locate for you or tools running outside the container. You can make it a little easier by defining a name for
+the volume, when creating the container.
+
+```console
+$ sudo docker run -d --name gitblit -v gitblit-data:/var/opt/gitblit -p 8443:8443 -p 29418:29418 gitblit/gitblit:rpc
+```
+
+Under the base directory, configuration and repository data are separated into two different directories.
+Configuration data is under `/var/opt/gitblit/etc` and repository data under `/var/opt/gitblit/srv`. If, for
+some reason, you want to use different volumes for either, e.g. for different kinds of backup, you can attach
+two volumes to these directories.
+
+```console
+$ sudo docker run -d --name gitblit -v gitblit-config:/var/opt/gitblit/etc -v gitblit-repos:/var/opt/gitblit/srv -p 8443:8443 -p 29418:29418 gitblit/gitblit:rpc
+```
+
+Naming a volume makes it more discoverable with [Docker's tools](https://docs.docker.com/engine/reference/commandline/volume_ls/):
+
+```console
+$ sudo docker volume ls --format 'table {{.Name}}\t{{.Mountpoint}}\t{{.Driver}}'
+VOLUME NAME     MOUNTPOINT                                     DRIVER
+gitblit-config  /var/lib/docker/volumes/gitblit-config/_data   local
+gitblit-repos   /var/lib/docker/volumes/gitblit-repos/_data    local
+```
+
+
+### Temporary webapp data
+
+For advanced usage under Linux, you may be able to improve performance by moving Gitblit's `temp` folder
+to RAM. Gitblit unpacks web application data on each start into a temporary folder. The default for that
+folder in the Docker image is `/var/opt/gitblit/temp`. Under Linux, you can [mount a `tmpfs` volume](https://docs.docker.com/storage/tmpfs/)
+to that path which will result in the temporary files being stored in the host memory. This makes reading
+fast and when the container is stopped, they are gone.
+
+```console
+$ sudo docker run -d --name gitblit --tmpfs /var/opt/gitblit/temp -p 8443:8443 gitblit/gitblit:rpc
+```
+
 
 
 # Image Variants
