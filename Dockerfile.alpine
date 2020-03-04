@@ -3,6 +3,10 @@ FROM openjdk:8-jre-alpine
 ENV GITBLIT_VERSION 1.9.0
 ENV GITBLIT_DOWNLOAD_SHA 349302ded75edfed98f498576861210c0fe205a8721a254be65cdc3d8cdd76f1
 
+# add our user and group first to make sure their IDs get assigned consistently, regardless of whatever packages get added
+RUN addgroup -S -g 8117 gitblit && adduser -S -H -G gitblit -u 8117 -h /opt/gitblit gitblit
+
+
 LABEL maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke <f.zschocke+gitblit@gmail.com>" \
       org.label-schema.schema-version="1.0" \
       org.label-schema.version="${GITBLIT_VERSION}"
@@ -10,17 +14,28 @@ LABEL maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke <f.zsc
 
 ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
 
-
-
-
-
-# Download and install Gitblit
+# Install su-exec to step down from root
 RUN set -eux; \
+    apk add --no-cache \
+        'su-exec>=0.2' \
+        ; \
+    \
+    \
+# Download and install Gitblit
     wget -nv -O gitblit.tar.gz ${GITBLIT_DOWNLOAD_URL} ; \
     echo "${GITBLIT_DOWNLOAD_SHA} *gitblit.tar.gz" | sha256sum -c - ; \
     mkdir -p /opt/gitblit ; \
     tar xzf gitblit.tar.gz -C /opt/gitblit --strip-components 1 ; \
-    rm -f gitblit.tar.gz ;
+    rm -f gitblit.tar.gz ; \
+# Remove unneeded scripts.
+    rm -f /opt/gitblit/install-service-*.sh ; \
+    rm -r /opt/gitblit/service-*.sh ; \
+    \
+# Change shell to 'sh' for Alpine
+    for file in /opt/gitblit/*.sh ; do \
+        sed -i -e 's;bin/bash;bin/sh;' $file ; \
+    done
+
 
 
 ENV GITBLIT_VAR /var/opt/gitblit
@@ -29,7 +44,7 @@ ENV GITBLIT_VAR /var/opt/gitblit
 RUN set -eux ; \
     gbetc=$GITBLIT_VAR/etc ; \
     gbsrv=$GITBLIT_VAR/srv ; \
-    mkdir -p -m 0770 $gbsrv ; \
+    mkdir -p -m 0750 $gbsrv ; \
     mv /opt/gitblit/data/git $gbsrv ; \
     ln -s $gbsrv/git /opt/gitblit/data/git ; \
     mv /opt/gitblit/data $gbetc ; \
@@ -126,16 +141,19 @@ include = gitblit-docker.properties\n\
 ''#\n\
 \n' > $gbetc/gitblit.properties ; \
     \
-# Remove unneeded scripts.
-    rm -f /opt/gitblit/install-service-*.sh ; \
-    rm -r /opt/gitblit/service-*.sh ;
+    \
+# Change ownership to gitblit user for all files that the process needs to write
+    chown -R gitblit:gitblit $GITBLIT_VAR ; \
+# Set file permissions so that gitblit can read all and others cannot mess up
+# or read private data
+    chmod -R o-rwx $gbsrv ; \
+    chmod -R u+rwxs $gbsrv $gbsrv/git ; \
+    chmod -R u+rwxs $gbetc ; \
+    chmod -R o-rwx $gbetc ; \
+    chmod ug=r $gbetc/defaults.properties ; \
+    chmod g-w $gbetc/gitblit-docker.properties ; \
+    chmod 0644 $gbetc/gitblit.properties ;
 
-
-# Change shell to 'sh' for Alpine
-RUN set -eux ; \
-    for file in /opt/gitblit/*.sh ; do \
-        sed -i -e 's;bin/bash;bin/sh;' $file ; \
-    done
 
 
 # Setup the Docker container environment
@@ -143,9 +161,15 @@ ENV PATH /opt/gitblit:$PATH
 
 WORKDIR /opt/gitblit
 
-EXPOSE 8080 8443 9418 29418
-
 VOLUME $GITBLIT_VAR
 
-# run application
-CMD ["java", "-server", "-Xmx1024M", "-Djava.awt.headless=true", "-cp", "gitblit.jar:ext/*", "com.gitblit.GitBlitServer", "--baseFolder", "/var/opt/gitblit/etc"]
+
+COPY docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+# 8080:  HTTP front-end and transport
+# 8443:  HTTPS front-end and transport
+# 9418:  Git protocol transport
+# 29418: SSH transport
+EXPOSE 8080 8443 9418 29418
+CMD ["gitblit"]

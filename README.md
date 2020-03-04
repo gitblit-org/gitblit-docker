@@ -39,6 +39,10 @@ The Gitblit image stores data under `/var/opt/gitblit`. A Docker volume is defin
 so that data is stored persistently and efficiently. The data is split into a subfolder for
 configuration data (`etc/`) and one for repository data (`srv/`).
 
+### User id
+
+The gitblit server is run under the user and group id `8117`, assigned to the user `gitblit`.
+
 
 ## Build Instructions
 
@@ -52,7 +56,7 @@ git clone https://github.com/gitblit/gitblit-docker.git
 ### Build your Docker container
 ```
 cd gitblit-docker
-sudo docker build -t my-gitblit - < Dockerfile
+sudo docker build -t my-gitblit .
 ```
 
 ### Run your Gitblit container and setup localhost port-forwarding (*-p localhost:container*)

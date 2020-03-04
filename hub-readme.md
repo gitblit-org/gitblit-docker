@@ -105,6 +105,16 @@ $ sudo docker run -d --name gitblit --tmpfs /var/opt/gitblit/temp -p 8443:8443 g
 ```
 
 
+## User and group id
+
+Since image version 1.9.0-3 the gitblit process will be started as a non privileged user. The user id and group id used by the images are both `8117`.
+
+```console
+$ docker run -it --rm gitblit id gitblit
+uid=8117(gitblit) gid=8117(gitblit) groups=8117(gitblit)
+```
+
+
 
 # Image Variants
 The `gitblit/gitblit` images come in multiple flavors, each designed for a specific use case.
