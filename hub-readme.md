@@ -91,6 +91,17 @@ gitblit-config  /var/lib/docker/volumes/gitblit-config/_data   local
 gitblit-repos   /var/lib/docker/volumes/gitblit-repos/_data    local
 ```
 
+It also makes updates easier. Simply provide the same named volumes to the new version of the container:
+
+```console
+$ sudo docker pull gitblit/gitblit:rpc
+$ sudo docker stop gitblit
+$ sudo docker container rm gitblit
+$ sudo docker run -d --name gitblit -v gitblit-data:/var/opt/gitblit -p 8443:8443 -p 29418:29418 gitblit/gitblit:rpc
+```
+
+Updating with anonymous volumes (you didn't provide a name for) requires you to either find out the volume id from the current running container and reusing that id for the new container, or to use the `--volumes-from` parameter, which requires the old container to still be around.
+
 
 ### Temporary webapp data
 
@@ -102,6 +113,19 @@ fast and when the container is stopped, they are gone.
 
 ```console
 $ sudo docker run -d --name gitblit --tmpfs /var/opt/gitblit/temp -p 8443:8443 gitblit/gitblit:rpc
+```
+
+
+## Configuration
+
+Configure the gitblit instance by adding your custom settings to the file `gitblit.properties` in the directory `/var/opt/gitbit/etc` in the container.
+
+### JVM options
+
+The gitblit server starts by default with the JVM option `-Xmx1024M`. You can override this by providing the `JAVA_OPTS` environment variable.
+
+```console
+$ sudo docker run -d --name gitblit -e "JAVA_OPTS=-Xmx2048m"  -p 8443:8443 gitblit/gitblit:rpc
 ```
 
 

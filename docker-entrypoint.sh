@@ -1,8 +1,15 @@
 #!/bin/sh
 set -e
 
+
+# allow JVM options to be set from outside
+if [ -z "$JAVA_OPTS" ] ; then
+	JAVA_OPTS="-Xmx1024M"
+fi
+
+
 gitblit_path=/opt/gitblit
-gitblit="java -server -Xmx1024M -Djava.awt.headless=true -cp ${gitblit_path}/gitblit.jar:${gitblit_path}/ext/* com.gitblit.GitBlitServer"
+gitblit="java -server $JAVA_OPTS -Djava.awt.headless=true -cp ${gitblit_path}/gitblit.jar:${gitblit_path}/ext/* com.gitblit.GitBlitServer"
 
 
 # use gosu or su-exec to step down from root

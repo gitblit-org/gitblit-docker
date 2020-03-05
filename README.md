@@ -7,6 +7,9 @@ These instructions assume you are running Linux and you have already [installed 
 
 You can use the official [Gitblit Docker image](https://hub.docker.com/r/gitblit/gitblit).
 
+See the [Docker Hub Readme](hub-readme.md) for more detailed usage information.
+
+
 ### Start a Gitblit instance
 
 
