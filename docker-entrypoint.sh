@@ -4,7 +4,7 @@ set -e
 
 # allow JVM options to be set from outside
 if [ -z "$JAVA_OPTS" ] ; then
-	JAVA_OPTS="-Xmx1024M"
+    JAVA_OPTS="-Xmx1024M"
 fi
 
 
@@ -85,10 +85,10 @@ fi
 
 # if we should run gitblit, replace with the java command
 if [ "$1" = 'gitblit' ]; then
-	shift
-	# if no base folder is given, set the one in our docker default
-	baseFolder=
-	echo "$*" | grep -q -- "--baseFolder" || baseFolder="--baseFolder $GITBLIT_VAR/etc"
+    shift
+    # if no base folder is given, set the one in our docker default
+    baseFolder=
+    echo "$*" | grep -q -- "--baseFolder" || baseFolder="--baseFolder $GITBLIT_VAR/etc"
     set -- $gitblit $baseFolder "$@"
 
 
