@@ -8,8 +8,59 @@ if [ -z "$JAVA_OPTS" ] ; then
 fi
 
 
+gitblit_docker=$GITBLIT_VAR/etc/gitblit-docker.properties
 gitblit_path=/opt/gitblit
 gitblit="java -server $JAVA_OPTS -Djava.awt.headless=true -cp ${gitblit_path}/gitblit.jar:${gitblit_path}/ext/* com.gitblit.GitBlitServer"
+
+
+# Sets settings in gitblit-docker.properties file
+# First argument is the key name, second is the value
+set_ting ()
+{
+    key=$1
+    val=$2
+
+    if grep -q $key $gitblit_docker ; then
+        sed -i -e "s/^$key.*/$key = $val/" $gitblit_docker
+    else
+    	echo $key = $val >> $gitblit_docker
+    fi
+}
+
+
+
+set_rpc ()
+{
+    if [ -n "$GITBLIT_RPC" ] ; then
+        case $GITBLIT_RPC in 
+            off)
+                set_ting web.enableRpcServlet false
+                set_ting web.enableRpcManagement false
+                set_ting web.enableRpcAdministration false
+                ;;
+            on)
+                set_ting web.enableRpcServlet true
+                set_ting web.enableRpcManagement false
+                set_ting web.enableRpcAdministration false
+                ;;
+            mgmt|mgmnt)
+                set_ting web.enableRpcServlet true
+                set_ting web.enableRpcManagement true
+                set_ting web.enableRpcAdministration false
+                ;;
+            admin)
+                set_ting web.enableRpcServlet true
+                set_ting web.enableRpcManagement true
+                set_ting web.enableRpcAdministration true
+                ;;
+            *)
+                echo "ERROR: Invalid value for GITBLIT_RPC: $GITBLIT_RPC"
+                exit 1
+                ;;
+        esac
+    fi
+}
+
 
 
 # use gosu or su-exec to step down from root
@@ -39,6 +90,10 @@ if [ "$1" = 'gitblit' ]; then
 	baseFolder=
 	echo "$*" | grep -q -- "--baseFolder" || baseFolder="--baseFolder $GITBLIT_VAR/etc"
     set -- $gitblit $baseFolder "$@"
+
+
+    # set RPC settings
+    set_rpc
 
 
     # allow the container to be started with `--user`

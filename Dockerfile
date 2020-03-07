@@ -107,13 +107,13 @@ s/^server.redirectToHttpsPort.*/#server.redirectToHttpsPort = true/\n\
 ''# Do not define your custom settings in this file. Your overrides or\n\
 ''# custom settings should be defined in the "gitblit.properties" file.\n\
 ''#\n\
-include = /opt/gitblit/etc/defaults.properties,/opt/gitblit/etc/system.properties\
+include = /opt/gitblit/etc/defaults.properties,/opt/gitblit/etc/system.properties\n\
 \n' > $gbetc/gitblit-docker.properties ; \
-# Currently RPC is enabled by default
-    echo "web.enableRpcManagement=true" >> $gbetc/gitblit-docker.properties ; \
-    echo "web.enableRpcAdministration=true" >> $gbetc/gitblit-docker.properties ; \
-    sed -i -e 's/^web.enableRpcManagement.*/#web.enableRpcManagement=true/' \
-           -e 's/^web.enableRpcAdministration.*/#web.enableRpcAdministration=true/' \
+    \
+# Comment out settings in defaults that we support to override in gitblit-docker.properties
+    sed -i -e 's/^\(web.enableRpcServlet.*\)/#\1/' \
+           -e 's/^\(web.enableRpcManagement.*\)/#\1/' \
+           -e 's/^\(web.enableRpcAdministration.*\)/#\1/' \
         $gbetc/defaults.properties ; \
     \
 # Create the gitblit.properties file that the user can use for customization.
@@ -157,6 +157,8 @@ include = gitblit-docker.properties\n\
 
 
 # Setup the Docker container environment
+ARG GITBLIT_RPC
+ENV GITBLIT_RPC ${GITBLIT_RPC:-on}
 ENV PATH /opt/gitblit:$PATH
 
 WORKDIR /opt/gitblit

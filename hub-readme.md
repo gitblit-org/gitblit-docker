@@ -20,30 +20,36 @@ Gitblit can be used without any other Git tooling or it can cooperate with your 
 You can simply start serving git repositories by running a container from a provided image.
 
 ```console
-sudo docker pull gitblit/gitblit:rpc
-sudo docker run -d --name gitblit -p 8443:8443 -p 8080:8080 -p 9418:9418 -p 29418:29418 gitblit/gitblit:rpc
+$ sudo docker pull gitblit/gitblit:rpc
+$ sudo docker run -d --name gitblit -p 8443:8443 -p 8080:8080 -p 9418:9418 -p 29418:29418 gitblit/gitblit
 ```
 
 This will launch Gitblit serving the web UI on ports 8080 (HTTP) and 8443 (HTTPS). Your repositories will
 also be accessible via SSH (29418), HTTP, HTTPS, and the GIT (9418) procotol. A container is started with
-the name `gitblit` using the provided image `gitblit/gitblit:rpc`.  
-The RPC administration interface has been enabled for the `*-rpc`images so that you may use the Gitblit Manager
-to configure settings, manage repositories, or manage users.
+the name `gitblit` using the provided image `gitblit/gitblit`.  
 
 Browse to http://localhost:8080 or https://localhost:8443 and login as `admin` with password `admin`.
 
-The default Gitblit Docker images define all transports used by Gitblit, but that does not mean, that they are
-available from oustside the container. To make a port available to the outside world, use the `-p` commandline
+##### Ports
+
+The default Gitblit Docker images expose all transports used by Gitblit, but that does not mean, that they are
+available from outside the container. To make a port available to the outside world, use the `-p` commandline
 parameter. For example, if you only want to use HTTPS and SSH, run:
 
 ```console
-$ sudo docker run -d --name gitblit -p 8443:8443 -p 29418:29418 gitblit/gitblit:rpc
+$ sudo docker run -d --name gitblit -p 8443:8443 -p 29418:29418 gitblit/gitblit
 ```
 
+Exposed ports are:
+
+* `8080`: HTTP
+* `8443`: HTTPS
+* `9418`: Git protocol
+* `29418`: SSH
 
 ## Stop the instance
 
-Gitblit can be shut down cleanly with the `gitblit-stop.h` script.
+Gitblit can be shut down cleanly with the `gitblit-stop.sh` script.
 
 ```console
 $ sudo docker exec -it gitblit gitblit-stop.sh
@@ -70,7 +76,7 @@ locate for you or tools running outside the container. You can make it a little 
 the volume, when creating the container.
 
 ```console
-$ sudo docker run -d --name gitblit -v gitblit-data:/var/opt/gitblit -p 8443:8443 -p 29418:29418 gitblit/gitblit:rpc
+$ sudo docker run -d --name gitblit -v gitblit-data:/var/opt/gitblit -p 8443:8443 -p 29418:29418 gitblit/gitblit
 ```
 
 Under the base directory, configuration and repository data are separated into two different directories.
@@ -79,7 +85,7 @@ some reason, you want to use different volumes for either, e.g. for different ki
 two volumes to these directories.
 
 ```console
-$ sudo docker run -d --name gitblit -v gitblit-config:/var/opt/gitblit/etc -v gitblit-repos:/var/opt/gitblit/srv -p 8443:8443 -p 29418:29418 gitblit/gitblit:rpc
+$ sudo docker run -d --name gitblit -v gitblit-config:/var/opt/gitblit/etc -v gitblit-repos:/var/opt/gitblit/srv -p 8443:8443 -p 29418:29418 gitblit/gitblit
 ```
 
 Naming a volume makes it more discoverable with [Docker's tools](https://docs.docker.com/engine/reference/commandline/volume_ls/):
@@ -100,7 +106,7 @@ $ sudo docker container rm gitblit
 $ sudo docker run -d --name gitblit -v gitblit-data:/var/opt/gitblit -p 8443:8443 -p 29418:29418 gitblit/gitblit:rpc
 ```
 
-Updating with anonymous volumes (you didn't provide a name for) requires you to either find out the volume id from the current running container and reusing that id for the new container, or to use the `--volumes-from` parameter, which requires the old container to still be around.
+Updating with anonymous volumes (no name provided for it) requires you to either find out the volume id from the current running container and reusing that id for the new container, or to use the `--volumes-from` parameter, which requires the old container to still be around.
 
 
 ### Temporary webapp data
@@ -118,15 +124,35 @@ $ sudo docker run -d --name gitblit --tmpfs /var/opt/gitblit/temp -p 8443:8443 g
 
 ## Configuration
 
-Configure the gitblit instance by adding your custom settings to the file `gitblit.properties` in the directory `/var/opt/gitbit/etc` in the container.
+Configure the gitblit instance by adding your custom settings to the file `gitblit.properties` in the directory `/var/opt/gitblit/etc` in the container. Some options can be controlled by providing environment variables to the container.
 
-### JVM options
+### Environment variables
+
+##### RPC `GITBLIT_RPC`
+
+Gitblit provides a [RPC interface](http://gitblit.github.io/gitblit/rpc.html) allowing a remote client to manage or administer the Gitblit server. If administration via RPC is enabled, a remote client (like the example Gitblit Manager) can be used to customize Gitblit settings. The default is to have [basic RPC enabled](http://gitblit.github.io/gitblit/rpc.html#H8) to retrieve repositories, branches, basic settings, etc. but not allow management. The `GITBLIT_RPC` environment variable can be used to control the level of RPC functionality.
+
+* `off`: RPC is completly disabled.
+* `on`: sets `web.enableRpcServlet`to true, enables retrieving information (default).
+* `mgmt`: sets `web.enableRpcManagement`to true, enables management of repositories and users.
+* `admin`: sets `web.enableRpcAdministration` to true, enables server administration.
+
+For example, to turn RPC off, use:
+
+```console
+$ sudo docker run -d --name gitblit -e "GITBLIT_RPC=off"  -p 8443:8443 gitblit/gitblit
+```
+
+
+##### JVM options `JAVA_OPTS`
 
 The gitblit server starts by default with the JVM option `-Xmx1024M`. You can override this by providing the `JAVA_OPTS` environment variable.
 
 ```console
-$ sudo docker run -d --name gitblit -e "JAVA_OPTS=-Xmx2048m"  -p 8443:8443 gitblit/gitblit:rpc
+$ sudo docker run -d --name gitblit -e "JAVA_OPTS=-Xmx2048m"  -p 8443:8443 gitblit/gitblit
 ```
+
+
 
 
 ## User and group id
@@ -141,21 +167,37 @@ uid=8117(gitblit) gid=8117(gitblit) groups=8117(gitblit)
 
 
 # Image Variants
-The `gitblit/gitblit` images come in multiple flavors, each designed for a specific use case.
+The `gitblit/gitblit` images come in multiple flavors.
 
-## `gitblit/gitblit:<version>-rpc`
+## `gitblit/gitblit:<version>`
 
-This is the defacto image. It has RPC management and administration enabled. If you are unsure about what your needs are, you probably want to use this one. It is designed to be used both as a throw away container, as well as the base to build other images off of.
+This is the defacto image. If you are unsure about what your needs are, you probably want to use this one. It is designed to be used both as a throw away container, as well as the base to build other images off of.
 
-## `httpd:<version>-rpc-alpine`
+## `gitblit/gitblit:<version>-alpine`
 
 This image is based on the popular [Alpine Linux project](http://alpinelinux.org), available in [the `alpine` official image](https://hub.docker.com/_/alpine). Alpine Linux is much smaller than most distribution base images (~5MB), and thus leads to much slimmer images in general.
-
-It has RPC management and administration enabled.
 
 This variant is highly recommended when final image size being as small as possible is desired. The main caveat to note is that it does use [musl libc](http://www.musl-libc.org) instead of [glibc and friends](http://www.etalabs.net/compare_libcs.html), so certain software might run into issues depending on the depth of their libc requirements. However, most software doesn't have an issue with this, so this variant is usually a very safe choice. See [this Hacker News comment thread](https://news.ycombinator.com/item?id=10782897) for more discussion of the issues that might arise and some pro/con comparisons of using Alpine-based images.
 
 To minimize image size, it's uncommon for additional related tools (such as `git` or `bash`) to be included in Alpine-based images. Using this image as a base, add the things you need in your own Dockerfile (see the [`alpine` image description](https://hub.docker.com/_/alpine/) for examples of how to install packages if you are unfamiliar).
+
+
+## `gitblit/gitblit:<version>-rpc`
+
+This image has RPC management and administration already enabled, so that you may use a remote client like the Gitblit Manager to configure settings, manage repositories, or manage users.
+
+Do not use the HTTP port over a network on this image for RPC, because passwords are insecurely transmitted from your browser/RPC client using Basic authentication!
+
+## `gitblit/gitblit:<version>-rpc-alpine`
+
+This image is based on the popular [Alpine Linux project](http://alpinelinux.org), available in [the `alpine` official image](https://hub.docker.com/_/alpine). Alpine Linux is much smaller than most distribution base images (~5MB), and thus leads to much slimmer images in general.
+
+It has RPC management and administration already enabled, so that you may use a remote client like the Gitblit Manager to configure settings, manage repositories, or manage users.
+
+Do not use the HTTP port over a network on this image for RPC, because passwords are insecurely transmitted from your browser/RPC client using Basic authentication!
+
+
+
 
 # License
 
