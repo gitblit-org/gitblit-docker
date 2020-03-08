@@ -42,9 +42,10 @@ ENV GITBLIT_VAR /var/opt/gitblit
 
 # Move the data files to a separate directory and set some defaults
 RUN set -eux ; \
+    mkdir -p -m 0775 $GITBLIT_VAR ; \
     gbetc=$GITBLIT_VAR/etc ; \
     gbsrv=$GITBLIT_VAR/srv ; \
-    mkdir -p -m 0750 $gbsrv ; \
+    mkdir -p -m 0775 $gbsrv ; \
     mv /opt/gitblit/data/git $gbsrv ; \
     ln -s $gbsrv/git /opt/gitblit/data/git ; \
     mv /opt/gitblit/data $gbetc ; \
@@ -146,13 +147,17 @@ include = gitblit-docker.properties\n\
     chown -R gitblit:gitblit $GITBLIT_VAR ; \
 # Set file permissions so that gitblit can read all and others cannot mess up
 # or read private data
-    chmod -R o-rwx $gbsrv ; \
-    chmod -R u+rwxs $gbsrv $gbsrv/git ; \
-    chmod -R u+rwxs $gbetc ; \
-    chmod -R o-rwx $gbetc ; \
-    chmod ug=r $gbetc/defaults.properties ; \
-    chmod g-w $gbetc/gitblit-docker.properties ; \
-    chmod 0644 $gbetc/gitblit.properties ;
+    chmod ug+rwxs $gbsrv $gbsrv/git ; \
+    chmod ug+rwxs $gbetc $gbetc/certs ; \
+    chmod go=r $gbetc/defaults.properties ; \
+    chmod 0664 $gbetc/gitblit-docker.properties ; \
+    chmod 0664 $gbetc/gitblit.properties ; \
+    \
+# Now we make a backup of the etc files, so that we can copy them to mount bound
+# volumes to make sure all needed files are present in them.
+    cp -a $gbetc /opt/gitblit/vog-etc ; \
+    cp -a $gbsrv/git/project.mkd /opt/gitblit/srv-project.mkd ;
+
 
 
 

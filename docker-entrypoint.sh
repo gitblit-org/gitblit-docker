@@ -8,7 +8,8 @@ if [ -z "$JAVA_OPTS" ] ; then
 fi
 
 
-gitblit_docker=$GITBLIT_VAR/etc/gitblit-docker.properties
+gitblit_etc=$GITBLIT_VAR/etc
+gitblit_docker=$gitblit_etc/gitblit-docker.properties
 gitblit_path=/opt/gitblit
 gitblit="java -server $JAVA_OPTS -Djava.awt.headless=true -cp ${gitblit_path}/gitblit.jar:${gitblit_path}/ext/* com.gitblit.GitBlitServer"
 
@@ -62,6 +63,69 @@ set_rpc ()
 }
 
 
+# Make sure the data volume is populated and writeable.
+fill_volume ()
+{
+    # Copy config files etc.
+    if [ ! -e ${gitblit_etc} ] ; then
+        mkdir -p ${gitblit_etc}
+        [ "$(id -u)" = '0' ] && chown -f gitblit:gitblit ${gitblit_etc}
+    fi
+
+    for entry in $(ls /opt/gitblit/vog-etc) ; do
+        if [ -L /opt/gitblit/vog-etc/$entry ] || [ -f /opt/gitblit/vog-etc/$entry ]; then
+            if [ ! -e ${gitblit_etc}/$entry ] ; then
+                cp -dp /opt/gitblit/vog-etc/$entry $gitblit_etc/
+            fi
+        elif [ -d /opt/gitblit/vog-etc/$entry ] ; then
+            if [ ! -e ${gitblit_etc}/$entry ] ; then
+                mkdir -p $gitblit_etc/$entry
+                [ "$(id -u)" = '0' ] && chown -f gitblit:gitblit ${gitblit_etc}/$entry
+            fi
+
+            for file in $(ls /opt/gitblit/vog-etc/${entry}) ; do
+                if [ ! -e ${gitblit_etc}/${entry}/$file ] ; then
+                    cp -a /opt/gitblit/vog-etc/${entry}/$file $gitblit_etc/$entry/
+                fi
+            done
+        fi
+    done
+
+    # Unconditionally copy over the defaults.properties file, so that new settings
+    # are in there when Gitblit is upgraded. This file is not to be edited by the
+    # user and only serves a  s a reference, so verwriting it is okay. =)
+    cp -dp /opt/gitblit/vog-etc/defaults.properties $gitblit_etc/ || true
+
+
+
+    # Copy the project.mkd template
+    if [ ! -e ${GITBLIT_VAR}/srv/git ] ; then
+        mkdir -p ${GITBLIT_VAR}/srv/git
+        [ "$(id -u)" = '0' ] && chown -f gitblit:gitblit ${GITBLIT_VAR}/srv/git
+    fi
+
+    if [ ! -e ${GITBLIT_VAR}/srv/git/project.mkd ] ; then
+        cp -dp /opt/gitblit/srv-project.mkd ${GITBLIT_VAR}/srv/git/project.mkd
+    fi
+
+
+    # Our default for temporary files should exist
+    if [ ! -e ${GITBLIT_VAR}/temp ] ; then
+        mkdir -p ${GITBLIT_VAR}/temp
+        [ "$(id -u)" = '0' ] && chown -f gitblit:gitblit ${GITBLIT_VAR}/temp
+    fi
+
+
+
+
+    # If we are running as root, ensure that gitblit owns everything and fix permissions
+    if [ "$(id -u)" = '0' ] ; then
+        find ${GITBLIT_VAR} \! -user gitblit -exec chown gitblit '{}' +
+        find ${GITBLIT_VAR} -type d \! -perm -0700 -exec chmod u+rwxs '{}' +
+        find ${GITBLIT_VAR} -type f \! -perm -0600 -exec chmod u+rw   '{}' +
+    fi
+}
+
 
 # use gosu or su-exec to step down from root
 runas ()
@@ -88,8 +152,12 @@ if [ "$1" = 'gitblit' ]; then
     shift
     # if no base folder is given, set the one in our docker default
     baseFolder=
-    echo "$*" | grep -q -- "--baseFolder" || baseFolder="--baseFolder $GITBLIT_VAR/etc"
+    echo "$*" | grep -q -- "--baseFolder" || baseFolder="--baseFolder $gitblit_etc"
     set -- $gitblit $baseFolder "$@"
+
+
+    # populate volume and adjust permissions
+    fill_volume
 
 
     # set RPC settings

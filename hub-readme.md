@@ -66,29 +66,45 @@ $ sudo docker stop gitblit
 
 Gitblit stores two types of data, configuration data and Git repository data. While configuration data is
 relatively static, once the server is configured and has started, the repository data is what you use
-Gitblit for and is written often (unless you use Gitblit only as a repository browser). The docker image
-uses `/var/opt/gitblit` as the base folder for data storage.
+Gitblit for and is written often (unless you use Gitblit only as a repository browser). 
+
+The docker image uses `/var/opt/gitblit` as the base folder for data storage. Under the base folder, configuration and repository data are separated into two different directories. Configuration data is under `/var/opt/gitblit/etc` and repository data under `/var/opt/gitblit/srv`. 
+
+```console
+$ docker run -it --rm gitblit/gitblit ls -l /var/opt/gitblit
+total 8
+drwsrws--- 5 gitblit gitblit 4096 Mar  8 16:39 etc
+drwsrws--- 3 gitblit gitblit 4096 Mar  8 16:39 srv
+```
 
 To make this data persistent and operation on it more performant, a Docker [volume](https://docs.docker.com/engine/reference/builder/#volume)
-is defined for this path. [Docker manages this volume](https://docs.docker.com/storage/volumes/) automatically
-for you. This is the default and the easiest configuration. The only downside is that the files may be hard to
-locate for you or tools running outside the container. You can make it a little easier by defining a name for
-the volume, when creating the container.
+is defined for the path `/var/opt/gitblit` for the image. 
+
+
+Important note: There are several ways to store data used by applications that run in Docker containers. We encourage users of the gitblit images to familiarize themselves with the options available, including:
+
+* Let Docker manage the storage of your server data [by writing the files to disk on the host system using its own internal volume management](https://docs.docker.com/engine/tutorials/dockervolumes/#adding-a-data-volume). This is the default and is easy and fairly transparent to the user. The downside is that the files may be hard to locate for tools and applications that run directly on the host system, i.e. outside containers.
+* Create a data directory on the host system (outside the container) and [mount this to a directory visible from inside the container](https://docs.docker.com/engine/tutorials/dockervolumes/#mount-a-host-directory-as-a-data-volume). This places the server files in a known location on the host system, and makes it easy for tools and applications on the host system to access the files. The downside is that the user needs to make sure that the directory exists, and that e.g. directory permissions and other security mechanisms on the host system are set up correctly.
+
+The Docker documentation is a good starting point for understanding the different storage options and variations, and there are multiple blogs and forum postings that discuss and give advice in this area.
+
+#### Data volumes
+[Docker manages this volume](https://docs.docker.com/storage/volumes/) automatically
+for you. This is the default and the easiest configuration. You can make the volume files a little easier to locate by defining a name for the volume, when creating the container (or, even, when creating a volume beforehand).
 
 ```console
 $ sudo docker run -d --name gitblit -v gitblit-data:/var/opt/gitblit -p 8443:8443 -p 29418:29418 gitblit/gitblit
 ```
 
-Under the base directory, configuration and repository data are separated into two different directories.
-Configuration data is under `/var/opt/gitblit/etc` and repository data under `/var/opt/gitblit/srv`. If, for
-some reason, you want to use different volumes for either, e.g. for different kinds of backup, you can attach
-two volumes to these directories.
+If, for some reason, you want to use different volumes for `etc` and `srv`, e.g. for different kinds of backup, you can attach two different volumes to these directories.
 
 ```console
-$ sudo docker run -d --name gitblit -v gitblit-config:/var/opt/gitblit/etc -v gitblit-repos:/var/opt/gitblit/srv -p 8443:8443 -p 29418:29418 gitblit/gitblit
+$ sudo docker run -d --name gitblit -v gitblit-config:/var/opt/gitblit/etc \
+                                    -v gitblit-repos:/var/opt/gitblit/srv \
+                                    -p 8443:8443 -p 29418:29418 gitblit/gitblit
 ```
 
-Naming a volume makes it more discoverable with [Docker's tools](https://docs.docker.com/engine/reference/commandline/volume_ls/):
+Giving a volume a name also makes it more discoverable with [Docker's tools](https://docs.docker.com/engine/reference/commandline/volume_ls/):
 
 ```console
 $ sudo docker volume ls --format 'table {{.Name}}\t{{.Mountpoint}}\t{{.Driver}}'
@@ -97,7 +113,7 @@ gitblit-config  /var/lib/docker/volumes/gitblit-config/_data   local
 gitblit-repos   /var/lib/docker/volumes/gitblit-repos/_data    local
 ```
 
-It also makes updates easier. Simply provide the same named volumes to the new version of the container:
+It also makes upgrades of Gitblit easier. Simply provide the same named volume to the new version of the container:
 
 ```console
 $ sudo docker pull gitblit/gitblit:rpc
@@ -108,8 +124,23 @@ $ sudo docker run -d --name gitblit -v gitblit-data:/var/opt/gitblit -p 8443:844
 
 Updating with anonymous volumes (no name provided for it) requires you to either find out the volume id from the current running container and reusing that id for the new container, or to use the `--volumes-from` parameter, which requires the old container to still be around.
 
+#### Mount bind directories
 
-### Temporary webapp data
+The second option is to mount a local directory on the host into the container via a bind mount. Again, you can choose if you want all of the data in the host directory, or maybe just the configuration data, for easier editing, while the git data is stored in a docker data volume. (Or, vice versa, of course. Or, something completely different.)
+
+The container will copy the necessary configuration files, that Gitblit needs to run, into the directory. (While this is done automatically by docker for data volumes, it has to be done explicitly by the container for a bind mount volume.) Existing data is not overwritten (except for the `defaults.properties`file, use this only for reference). The start script will also change ownership of the directory and files to the `gitblit`user because the server process will need to be able to read them and write to some.
+
+```console
+$ sudo docker run -d --name gitblit -v /some/path/data:/var/opt/gitblit -p 8443:8443 gitblit/gitblit
+```
+
+Or, when only storing the configuration data in a local host directory, e.g. `/etc/gitblit`:
+
+```console
+$ sudo docker run -d --name gitblit -v /etc/gitblit:/var/opt/gitblit/etc -p 29418:29418 gitblit/gitblit
+```
+
+#### Temporary webapp data
 
 For advanced usage under Linux, you may be able to improve performance by moving Gitblit's `temp` folder
 to RAM. Gitblit unpacks web application data on each start into a temporary folder. The default for that
@@ -120,6 +151,43 @@ fast and when the container is stopped, they are gone.
 ```console
 $ sudo docker run -d --name gitblit --tmpfs /var/opt/gitblit/temp -p 8443:8443 gitblit/gitblit:rpc
 ```
+
+
+## Running as non-root with `--user`
+
+The gitblit images will drop root privileges in the start up script and run the Gitblit server process under the unprivileged user `gitblit` with user and group id `8117`. Still, the image allows to directly start a container as a non-root user with the `--user` command line parameter, albeit with some restrictions.
+
+If you simply don't want any part to run with root privileges, you can directly start the container as the user `8117`:
+
+```console
+$ sudo docker run -d --name gitblit --user 8117:8117 -p 8443:8443 -p 29418:29418 gitblit/gitblit
+```
+
+What does not work, is to use a different user id. This is because that user id will not have the permissions to write to the files and directories in the container. If you want to run the container as an arbitrary user, you need to provide a bind mount volume and make sure that the ownership and permissions allow the server process to write files. For example, to run under the user `picard`:
+
+```console
+$ ls -ls
+total88
+drwxr-x---  2 picard  picard     64 Mar  8 18:07 gitblit-data
+-rwxr-xr-x  2 picard  picard     88 Mar  8 18:07 somefile
+
+$ sudo docker run -d -v $PWD/gitblit-data:/var/opt/gitblit --user $(id -u picard) -p 8443:8443 gitblit/gitblit
+```
+
+Another use case is, if you want to use Gitblit only as an attractive repository browser for your local git projects. In that case you can bind mount only your directory with your git projects to `/var/opt/gitblit/srv/git` and run gitblit under your user id. In this case you also need to run it under the gitblit *group* id `8117`, so that the process has access to the other data volumes containing the configuration data.
+
+```console
+$ ls -l
+total 0
+drwxr-xr-x  29 anthony  staff  928 Feb 28 20:00 gitblit/
+drwxr-xr-x  10 anthony  staff  320 Mar  8 18:16 gitblit-docker/
+drwxr-xr-x  12 anthony  staff  384 Feb 16 15:26 gitblit-maven/
+drwxr-xr-x  13 anthony  staff  416 Feb 16 15:36 ok.sh/
+
+$ sudo docker run --rm --user $(id -u):8117 -v $PWD:/var/opt/gitblit/srv/git -p 8080:8080 gitblit/gitblit --httpsPort=0
+```
+
+You can then direct your browser to [http://localhost:8080](http://localhost:8080) and directly start browsing your repositories.
 
 
 ## Configuration
