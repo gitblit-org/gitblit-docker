@@ -67,3 +67,41 @@ sudo docker build -t my-gitblit .
 sudo docker run -d --name gitblit -p 8443:8443 -p 8080:8080 -p 9418:9418 -p 29418:29418 my-gitblit
 ```
 
+
+## Migrating from an older image
+
+The directory layout for the Gitblit data was changed with the image for version 1.9.0. If you had previously used a Docker image of Gitblit with a volume mounted on `/opt/gitblit-data`, migration of the configuration data is advised. A script `migrate-data` is available in the new image for this. Run the script from a container with your volume mounted under `/var/opt/gitblit`.
+
+```console
+$ ls -l
+total 0
+drwxr-xr-x  6 beowulf  staff       192 Mar 10 21:02 gitblit-data/
+
+$ sudo docker run -it --rm -v $PWD/gitblit-data:/var/opt/gitblit my-gitblit migrate-data
+
+Creating new directories 'etc' and 'srv' ...
+Moving existing files to new directories ...
+   Moving to folder 'etc': certs
+   Moving to folder 'etc': defaults.properties
+   Moving to folder 'srv': git
+   Moving to folder 'etc': gitblit.properties
+   Moving to folder 'etc': gitignore
+   Moving to folder 'etc': groovy
+   Moving to folder 'srv': lfs
+   Moving to folder 'etc': plugins
+   Moving to folder 'etc': projects.conf
+   Moving to folder 'etc': serverKeyStore.jks
+   Moving to folder 'etc': serverTrustStore.jks
+   Moving to folder 'etc': ssh-dsa-hostkey.pem
+   Moving to folder 'etc': ssh-rsa-hostkey.pem
+   Moving to folder 'etc': users.conf
+Adjusting 'include' setting in etc/gitblit.properties
+Checking the defaults.properties file for changes.
+   There were changes detected in the defaults.properties file.
+   These have been copied over into the gitblit.properties file.
+   Please review these and adjust as required.
+   The defaults.properties file should not be changed as it gets overwritten upon upgrade.
+Done.
+
+$ sudo docker run -d --name gitblit -v $PWD/gitblit-data:/var/opt/gitblit -p 8080:8080 my-gitblit
+```

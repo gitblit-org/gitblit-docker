@@ -233,6 +233,61 @@ uid=8117(gitblit) gid=8117(gitblit) groups=8117(gitblit)
 ```
 
 
+# Caveats
+
+## Migrating from an older image version
+
+The directory layout for the Gitblit data was changed in the official `gitblit/gitblit` image for version 1.9.0. If you had previously used a Docker image of Gitblit with a volume mounted on `/opt/gitblit-data`, migration of the configuration data is advised. This will make updates easier in the future. A script `migrate-data` is available in the current image for this. Run the script from a container with your volume mounted under `/var/opt/gitblit`.
+
+Below is an example for a container that had the local directory `gitblit-data` as a bind mount.
+
+
+```console
+$ sudo docker pull gitblit/gitblit
+
+$ sudo docker stop gitblit
+
+$ ls -l
+total 0
+drwxr-xr-x  6 beowulf  staff       192 Mar 10 21:02 gitblit-data/
+
+$ sudo docker run -it --rm -v $PWD/gitblit-data:/var/opt/gitblit gitblit/gitblit migrate-data
+
+Creating new directories 'etc' and 'srv' ...
+Moving existing files to new directories ...
+   Moving to folder 'etc': certs
+   Moving to folder 'etc': defaults.properties
+   Moving to folder 'srv': git
+   Moving to folder 'etc': gitblit.properties
+   Moving to folder 'etc': gitignore
+   Moving to folder 'etc': groovy
+   Moving to folder 'srv': lfs
+   Moving to folder 'etc': plugins
+   Moving to folder 'etc': projects.conf
+   Moving to folder 'etc': serverKeyStore.jks
+   Moving to folder 'etc': serverTrustStore.jks
+   Moving to folder 'etc': ssh-dsa-hostkey.pem
+   Moving to folder 'etc': ssh-rsa-hostkey.pem
+   Moving to folder 'etc': users.conf
+Adjusting 'include' setting in etc/gitblit.properties
+Checking the defaults.properties file for changes.
+   There were changes detected in the defaults.properties file.
+   These have been copied over into the gitblit.properties file.
+   Please review these and adjust as required.
+   The defaults.properties file should not be changed as it gets overwritten upon upgrade.
+Done.
+
+$ sudo docker run -d --name gitblit -v $PWD/gitblit-data:/var/opt/gitblit -p 8080:8080 giblit/gitblit
+```
+
+Cou could, alternatively, also run a container with the existing data directory without migration. Be advised, that in this case you will need to make sure that you have paths for temp and git folders in your `gitblit.properties` file. Also, **do not** have any custom settings in the `defaults.properties` file as this file will get **overwritten**.  
+Mount your not migrated volume under `/var/opt/gitblit/etc` which is the default for the `baseFolder`, or provide the path to where you mount the volume to the container in the `--baseFolder` parameter when running the container.
+
+```console
+$ sudo docker run -v /some/path/data:/opt/gitblit-data gitblit/gitblit --baseFolder /opt/gitblit-data
+```
+
+
 
 # Image Variants
 The `gitblit/gitblit` images come in multiple flavors.

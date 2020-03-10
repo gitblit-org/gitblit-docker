@@ -1,0 +1,95 @@
+#!/bin/sh
+set -e
+
+defaults_18=/usr/local/share/gitblit/defaults.properties-1.8
+defaults_19=/opt/gitblit/etc/defaults.properties
+old_data_dir=/var/opt/gitblit
+non_etc_list=/usr/local/share/gitblit/non-etc-files
+gbprops=/opt/gitblit/vog-etc/gitblit.properties
+backup_tar=gitblit-data-backup.tgz
+
+
+cd $old_data_dir
+
+# Check if this looks like a gitblit data folder, old or mid-migration
+if [ ! -f gitblit.properties ] ; then
+	if [ ! -d etc ] && [ ! -d srv ] ; then
+		echo ""
+		echo The directory mounted under $old_data_dir does not look like a gitblit data directory.
+		if [ x"$1" = "x-f" ] ; then
+			echo Running with "'-f'", continuing migration.
+		else
+			echo "Check if the correct folder was mounted, or run with '-f' to force migration."
+			exit 0
+		fi
+	fi
+fi
+
+echo ""
+
+# Backup!
+[ -e $backup_tar ] || tar  czf $backup_tar --exclude $backup_tar -X $non_etc_list .
+
+echo Creating new directories "'etc'" and "'srv'" ...
+mkdir -p -m 0775 etc
+mkdir -p -m 0775 srv
+
+# Move files to new directories
+echo Moving existing files to new directories ...
+for entry in $(ls) ; do
+	if [ "$entry" = "$backup_tar" ] || [ "$entry" = "etc" ]  || [ "$entry" = "srv" ]  || [ "$entry" = "temp" ] ; then
+		: echo "   Ignoring '$entry'"
+	elif grep -q "$entry" $non_etc_list ; then
+		echo "   Moving to folder 'srv': $entry"
+		mv $entry srv/
+	else
+		echo "   Moving to folder 'etc': $entry"
+		mv $entry etc/
+	fi
+done
+
+
+# Adjust configuration files
+echo Adjusting "'include'" setting in etc/gitblit.properties
+if [ ! -e etc/gitblit.properties.bak ] ; then
+	mv etc/gitblit.properties etc/gitblit.properties.bak
+fi
+
+#    This copies the first part of our new gitblit.properties file
+sed -n -e '/^ *include/ q
+1,/^ *include/ p' $gbprops > etc/gitblit.properties
+
+#    Now copy the bottom half of the old, possibly edited, gitblit.properties file.
+sed -n -e '/^ *include/,$ p' etc/gitblit.properties.bak >> etc/gitblit.properties
+
+#    And lastly, replace including defaults.properties with gitblit-docker.properties
+includefiles=$(grep -e '^ *include' etc/gitblit.properties | cut -d= -f2 | sed -e 's/ *defaults.properties *//' | sed -e 's/ *gitblit-docker.properties *//' | sed -e 's/[\r\n]*$//')
+if [ -z "$includefiles" ] ; then
+	includefiles=gitblit-docker.properties
+else
+	includefiles=gitblit-docker.properties,${includefiles#,}
+	includefiles=${includefiles%,}
+fi
+sed -i  -e "s/^ *include.*/include = $includefiles/" etc/gitblit.properties
+[ -f etc/gitblit.properties-e ] && rm etc/gitblit.properties-e
+
+
+# Check if the defaults.properties file was chnaged and save edited settings,
+# because we are overwriting it with the standard one now
+echo Checking the defaults.properties file for changes.
+changed_lines=$(cat $defaults_18 $defaults_18 $defaults_19 $defaults_19 etc/defaults.properties | grep -v "^#" | sort | uniq -u)
+if [ -n "$changed_lines" ] ; then
+	printf "\n\n# The following lines were changed in the defaults.properties file\n# compared to the original defaults of version 1.8.0\n" >> etc/gitblit.properties
+	printf "# They have been copied over here. Please do not change settings\n#in the defaults.properties file, as that file gets overwritten\n" >> etc/gitblit.properties
+	printf "# Please review these and correct or remove them\n\n" >> etc/gitblit.properties
+	echo "$changed_lines" >> etc/gitblit.properties
+
+	echo "   There were changes detected in the defaults.properties file."
+	echo "   These have been copied over into the gitblit.properties file."
+	echo "   Please review these and adjust as required."
+	echo "   The defaults.properties file should not be changed as it gets overwritten upon upgrade."
+fi
+
+
+echo Done.
+echo ""

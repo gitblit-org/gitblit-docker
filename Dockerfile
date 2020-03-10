@@ -1,16 +1,11 @@
 FROM openjdk:8-jre-slim
 
-ENV GITBLIT_VERSION 1.9.0
-ENV GITBLIT_DOWNLOAD_SHA 349302ded75edfed98f498576861210c0fe205a8721a254be65cdc3d8cdd76f1
-
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever packages get added
 RUN groupadd -r -g 8117 gitblit && useradd -r -M -g gitblit -u 8117 -d /opt/gitblit gitblit
 
 
-LABEL maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke <f.zschocke+gitblit@gmail.com>" \
-      org.label-schema.schema-version="1.0" \
-      org.label-schema.version="${GITBLIT_VERSION}"
-
+ENV GITBLIT_VERSION 1.9.0
+ENV GITBLIT_DOWNLOAD_SHA 349302ded75edfed98f498576861210c0fe205a8721a254be65cdc3d8cdd76f1
 
 ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
 
@@ -36,6 +31,14 @@ RUN set -eux ; \
 
 
 
+
+
+LABEL maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke <f.zschocke+gitblit@gmail.com>" \
+      org.label-schema.schema-version="1.0" \
+      org.label-schema.name="gitblit" \
+      org.label-schema.description="Gitblit is an open-source, pure Java stack for managing, viewing, and serving Git repositories." \
+      org.label-schema.url="http://gitblit.com" \
+      org.label-schema.version="${GITBLIT_VERSION}"
 
 
 ENV GITBLIT_VAR /var/opt/gitblit
@@ -108,6 +111,8 @@ s/^server.redirectToHttpsPort.*/#server.redirectToHttpsPort = true/\n\
 ''# Do not define your custom settings in this file. Your overrides or\n\
 ''# custom settings should be defined in the "gitblit.properties" file.\n\
 ''#\n\
+''# Do NOT change this include line. It makes sure that settings for this docker image are set.\n\
+''#\n\
 include = /opt/gitblit/etc/defaults.properties,/opt/gitblit/etc/system.properties\n\
 \n' > $gbetc/gitblit-docker.properties ; \
     \
@@ -159,6 +164,10 @@ include = gitblit-docker.properties\n\
     cp -a $gbsrv/git/project.mkd /opt/gitblit/srv-project.mkd ;
 
 
+
+# Provide script and data to migrate from earlier images to the new layout.
+COPY migrate/migrate-data /usr/local/bin/
+COPY migrate/non-etc-files migrate/defaults.* /usr/local/share/gitblit/
 
 
 # Setup the Docker container environment
