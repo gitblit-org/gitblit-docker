@@ -4,8 +4,8 @@ FROM openjdk:8-jre-slim
 RUN groupadd -r -g 8117 gitblit && useradd -r -M -g gitblit -u 8117 -d /opt/gitblit gitblit
 
 
-ENV GITBLIT_VERSION 1.9.0
-ENV GITBLIT_DOWNLOAD_SHA 349302ded75edfed98f498576861210c0fe205a8721a254be65cdc3d8cdd76f1
+ENV GITBLIT_VERSION 1.9.1
+ENV GITBLIT_DOWNLOAD_SHA c0b3095add8cb935f14a9ad1db571be74144f1c71f6495769390b94ca6b7525f
 
 ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
 
