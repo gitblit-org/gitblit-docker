@@ -24,7 +24,14 @@ RUN set -eux ; \
     rm -f gitblit.tar.gz ; \
 # Remove unneeded scripts.
     rm -f /opt/gitblit/install-service-*.sh ; \
-    rm -r /opt/gitblit/service-*.sh ;
+    rm -r /opt/gitblit/service-*.sh ; \
+    \
+# It is getting annoying not to have 'll' and colors when opening a bash in the container
+    echo "export LS_OPTIONS='--color=auto'" >> /root/.bashrc ; \
+    echo 'eval `dircolors -b`' >> /root/.bashrc ; \
+    echo "alias ls='"'ls $LS_OPTIONS'"'" >> /root/.bashrc ; \
+    echo "alias ll='"'ls $LS_OPTIONS -l'"'" >> /root/.bashrc ;
+
 
 
 
