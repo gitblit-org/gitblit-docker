@@ -5,8 +5,8 @@ RUN groupadd -r -g 8117 gitblit && useradd -r -M -g gitblit -u 8117 -d /opt/gitb
 
 
 ENV GITBLIT_VERSION 1.9.1
-ENV GITBLIT_DOWNLOAD_SHA c0b3095add8cb935f14a9ad1db571be74144f1c71f6495769390b94ca6b7525f
 
+ENV GITBLIT_DOWNLOAD_SHA c0b3095add8cb935f14a9ad1db571be74144f1c71f6495769390b94ca6b7525f
 ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
 
 # Install fetch dependencies, and gsou to step down from root
@@ -31,11 +31,6 @@ RUN set -eux ; \
     echo 'eval `dircolors -b`' >> /root/.bashrc ; \
     echo "alias ls='"'ls $LS_OPTIONS'"'" >> /root/.bashrc ; \
     echo "alias ll='"'ls $LS_OPTIONS -l'"'" >> /root/.bashrc ;
-
-
-
-
-
 
 
 
