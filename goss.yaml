@@ -1,0 +1,141 @@
+file:
+  /usr/local/bin/docker-entrypoint.sh:
+    filetype: file
+    exists: true
+    mode: "0755"
+    size: 5094
+    owner: root
+    group: root
+
+  /var/opt/gitblit/etc:
+    filetype: directory
+    exists: true
+    mode: "6775"
+    owner: gitblit
+    group: gitblit
+
+  /opt/gitblit/data:
+    filetype: symlink
+    exists: true
+    linked-to: /var/opt/gitblit/etc
+
+  /var/opt/gitblit/srv:
+    filetype: directory
+    exists: true
+    mode: "6775"
+    owner: gitblit
+    group: gitblit
+
+  /opt/gitblit/data/git:
+    filetype: symlink
+    exists: true
+    linked-to: /var/opt/gitblit/srv/git
+
+  /opt/gitblit/etc/system.properties:
+    filetype: file
+    exists: true
+    mode: "0644"
+    size: 345
+    owner: root
+    group: root
+
+  /var/opt/gitblit/etc/gitblit-docker.properties:
+    filetype: file
+    exists: true
+    mode: "0664"
+    owner: gitblit
+    group: gitblit
+    contains:
+      - "include = /opt/gitblit/etc/defaults.properties,/opt/gitblit/etc/system.properties"
+
+  /var/opt/gitblit/etc/gitblit.properties:
+    filetype: file
+    exists: true
+    mode: "0664"
+    owner: gitblit
+    group: gitblit
+    contains:
+      - "include = gitblit-docker.properties"
+
+  # Check container log if the Gitblit output reached the follwing lines
+  # and has no warnings or errors.
+  /goss/docker_output.log:
+    exists: true
+    contains:
+      - "All managers started"
+      - "Started Wicket"
+      - "!Failed"
+
+
+user:
+  gitblit:
+    exists: true
+    uid: 8117
+    gid: 8117
+    groups:
+    - gitblit
+    home: /opt/gitblit
+
+
+group:
+  gitblit:
+    exists: true
+    gid: 8117
+
+
+mount:
+  /var/opt/gitblit:
+    exists: true
+    opts:
+    - rw
+    - relatime
+
+
+process:
+  java:
+    running: true
+
+
+port:
+  tcp:8080:
+    listening: true
+    ip:
+      - 0.0.0.0
+  tcp:8081:
+    listening: true
+    ip:
+      - 127.0.0.1
+  tcp:8443:
+    listening: true
+    ip:
+      - 0.0.0.0
+  tcp:9418:
+    listening: true
+    ip:
+      - 0.0.0.0
+  tcp:29418:
+    listening: true
+    ip:
+      - 0.0.0.0
+
+
+http:
+  https://localhost:8443:
+    status: 200
+    allow-insecure: true
+    no-follow-redirects: true
+    timeout: 5000
+    body:
+      - "<title>Gitblit</title>"
+      - "<h2>Welcome to Gitblit</h2>"
+
+  http://localhost:8080:
+    status: 200
+    allow-insecure: true
+    no-follow-redirects: false
+    timeout: 5000
+    body:
+      - "<title>Gitblit</title>"
+      - "<h2>Welcome to Gitblit</h2>"
+
+

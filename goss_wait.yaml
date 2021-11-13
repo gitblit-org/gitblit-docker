@@ -1,0 +1,14 @@
+port:
+  tcp:8080:
+    listening: true
+    ip:
+      - 0.0.0.0
+  tcp:8081:
+    listening: true
+    ip:
+      - 127.0.0.1
+
+
+process:
+  java:
+    running: true
