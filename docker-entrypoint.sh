@@ -93,7 +93,7 @@ fill_volume ()
 
     # Unconditionally copy over the defaults.properties file, so that new settings
     # are in there when Gitblit is upgraded. This file is not to be edited by the
-    # user and only serves a  s a reference, so verwriting it is okay. =)
+    # user and only serves as a reference, so overwriting it is okay. =)
     cp -dp /opt/gitblit/vog-etc/defaults.properties $gitblit_etc/ || true
 
 

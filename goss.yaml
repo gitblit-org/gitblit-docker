@@ -3,7 +3,7 @@ file:
     filetype: file
     exists: true
     mode: "0755"
-    size: 5094
+    size: 5093
     owner: root
     group: root
 

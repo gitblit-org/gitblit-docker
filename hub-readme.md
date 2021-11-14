@@ -83,8 +83,8 @@ is defined for the path `/var/opt/gitblit` for the image.
 
 Important note: There are several ways to store data used by applications that run in Docker containers. We encourage users of the gitblit images to familiarize themselves with the options available, including:
 
-* Let Docker manage the storage of your server data [by writing the files to disk on the host system using its own internal volume management](https://docs.docker.com/engine/tutorials/dockervolumes/#adding-a-data-volume). This is the default and is easy and fairly transparent to the user. The downside is that the files may be hard to locate for tools and applications that run directly on the host system, i.e. outside containers.
-* Create a data directory on the host system (outside the container) and [mount this to a directory visible from inside the container](https://docs.docker.com/engine/tutorials/dockervolumes/#mount-a-host-directory-as-a-data-volume). This places the server files in a known location on the host system, and makes it easy for tools and applications on the host system to access the files. The downside is that the user needs to make sure that the directory exists, and that e.g. directory permissions and other security mechanisms on the host system are set up correctly.
+* Let Docker manage the storage of your server data [by writing the files to disk on the host system using its own internal volume management](https://docs.docker.com/get-started/05_persisting_data/#container-volumes). This is the default and is easy and fairly transparent to the user. The downside is that the files may be hard to locate for tools and applications that run directly on the host system, i.e. outside containers.
+* Create a data directory on the host system (outside the container) and [mount this to a directory visible from inside the container](https://docs.docker.com/get-started/06_bind_mounts/). This places the server files in a known location on the host system, and makes it easy for tools and applications on the host system to access the files. The downside is that the user needs to make sure that the directory exists, and that e.g. directory permissions and other security mechanisms on the host system are set up correctly.
 
 The Docker documentation is a good starting point for understanding the different storage options and variations, and there are multiple blogs and forum postings that discuss and give advice in this area.
 
@@ -126,7 +126,7 @@ Updating with anonymous volumes (no name provided for it) requires you to either
 
 #### Mount bind directories
 
-The second option is to mount a local directory on the host into the container via a bind mount. Again, you can choose if you want all of the data in the host directory, or maybe just the configuration data, for easier editing, while the git data is stored in a docker data volume. (Or, vice versa, of course. Or, something completely different.)
+The second option is to mount a local directory on the host into the container via a [bind mount](https://docs.docker.com/storage/bind-mounts/). Again, you can choose if you want all of the data in the host directory, or maybe just the configuration data, for easier editing, while the git data is stored in a docker data volume. (Or, vice versa, of course. Or, something completely different.)
 
 The container will copy the necessary configuration files, that Gitblit needs to run, into the directory. (While this is done automatically by docker for data volumes, it has to be done explicitly by the container for a bind mount volume.) Existing data is not overwritten (except for the `defaults.properties`file, use this only for reference). The start script will also change ownership of the directory and files to the `gitblit`user because the server process will need to be able to read them and write to some.
 
