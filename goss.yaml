@@ -35,7 +35,7 @@ file:
     filetype: file
     exists: true
     mode: "0644"
-    size: 345
+    size: 353
     owner: root
     group: root
 

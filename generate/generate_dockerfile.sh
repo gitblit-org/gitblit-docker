@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Full fledged script that can be used with parameters
 #
@@ -308,7 +309,7 @@ printf "%s\n" \#\ This\ is\ not\ available\ outside\ and\ should\ not\ be\ chang
     printf "%s\n" \ \ \ \ echo\ \"filestore.storageFolder\ =\ \$\{gbsrv\}/lfs\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
     printf "%s\n" \ \ \ \ echo\ \"tickets.indexFolder\ =\ \$\{gbsrv\}/tickets/lucene\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
     printf "%s\n" \ \ \ \ echo\ \"federation.proposalsFolder\ =\ \$\{gbsrv\}/fedproposals\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"server.tempFolder\ =\ \$\{GITBLIT_VAR\}/temp\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
+    printf "%s\n" \ \ \ \ echo\ \"server.tempFolder\ =\ \$\{GITBLIT_VAR\}/temp/gitblit\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
     printf "%s\n" \ \ \ \ echo\ \"server.httpPort\ =\ 8080\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
     printf "%s\n" \ \ \ \ echo\ \"server.httpsPort\ =\ 8443\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
     printf "%s\n" \ \ \ \ echo\ \"server.redirectToHttpsPort\ =\ true\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
@@ -478,3 +479,4 @@ printf "%s\n" \#\ 9418:\ \ Git\ protocol\ transport
 printf "%s\n" \#\ 29418:\ SSH\ transport
 printf "%s\n" EXPOSE\ 8080\ 8443\ 9418\ 29418
 printf "%s\n" CMD\ \[\"gitblit\"\]
+printf "\n"

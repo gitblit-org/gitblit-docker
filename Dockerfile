@@ -96,7 +96,7 @@ s/^server.redirectToHttpsPort.*/#server.redirectToHttpsPort = true/\n\
     echo "filestore.storageFolder = ${gbsrv}/lfs" >> /opt/gitblit/etc/system.properties ; \
     echo "tickets.indexFolder = ${gbsrv}/tickets/lucene" >> /opt/gitblit/etc/system.properties ; \
     echo "federation.proposalsFolder = ${gbsrv}/fedproposals" >> /opt/gitblit/etc/system.properties ; \
-    echo "server.tempFolder = ${GITBLIT_VAR}/temp" >> /opt/gitblit/etc/system.properties ; \
+    echo "server.tempFolder = ${GITBLIT_VAR}/temp/gitblit" >> /opt/gitblit/etc/system.properties ; \
     echo "server.httpPort = 8080" >> /opt/gitblit/etc/system.properties ; \
     echo "server.httpsPort = 8443" >> /opt/gitblit/etc/system.properties ; \
     echo "server.redirectToHttpsPort = true" >> /opt/gitblit/etc/system.properties ; \
@@ -191,3 +191,4 @@ ENTRYPOINT ["docker-entrypoint.sh"]
 # 29418: SSH transport
 EXPOSE 8080 8443 9418 29418
 CMD ["gitblit"]
+
