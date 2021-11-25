@@ -292,6 +292,16 @@ $ sudo docker run -v /some/path/data:/opt/gitblit-data gitblit/gitblit --baseFol
 # Image Variants
 The `gitblit/gitblit` images come in multiple flavors.
 
+## `gitblit/gitblit:latest`
+
+This is the current release and as such the same as `gitblit/gitblit:<version>`.
+
+
+## `gitblit/gitblit:nightly`
+
+This image represents the latest development snapshot. It is build nightly from the head of the development branch when there were new commits. You can use this image to try out the current development state of Gitblit.
+
+
 ## `gitblit/gitblit:<version>`
 
 This is the defacto image. If you are unsure about what your needs are, you probably want to use this one. It is designed to be used both as a throw away container, as well as the base to build other images off of.
@@ -309,7 +319,7 @@ To minimize image size, it's uncommon for additional related tools (such as `git
 
 This image has RPC management and administration already enabled, so that you may use a remote client like the Gitblit Manager to configure settings, manage repositories, or manage users.
 
-Do not use the HTTP port over a network on this image for RPC, because passwords are insecurely transmitted from your browser/RPC client using Basic authentication!
+Do *not* use the HTTP port over a network on this image for RPC, because passwords are insecurely transmitted from your browser/RPC client using Basic authentication!
 
 ## `gitblit/gitblit:<version>-rpc-alpine`
 
@@ -317,7 +327,7 @@ This image is based on the popular [Alpine Linux project](http://alpinelinux.org
 
 It has RPC management and administration already enabled, so that you may use a remote client like the Gitblit Manager to configure settings, manage repositories, or manage users.
 
-Do not use the HTTP port over a network on this image for RPC, because passwords are insecurely transmitted from your browser/RPC client using Basic authentication!
+Do *not* use the HTTP port over a network on this image for RPC, because passwords are insecurely transmitted from your browser/RPC client using Basic authentication!
 
 
 
