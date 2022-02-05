@@ -4,9 +4,9 @@ FROM openjdk:8-jre-alpine
 RUN addgroup -S -g 8117 gitblit && adduser -S -H -G gitblit -u 8117 -h /opt/gitblit gitblit
 
 
-ENV GITBLIT_VERSION 1.9.1
+ENV GITBLIT_VERSION 1.9.2
 
-ENV GITBLIT_DOWNLOAD_SHA c0b3095add8cb935f14a9ad1db571be74144f1c71f6495769390b94ca6b7525f
+ENV GITBLIT_DOWNLOAD_SHA 7c656d322160f094beddca12db7d2ea00ccfb62373c26a09c818dfb72d20d4d2
 ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
 
 # Install su-exec to step down from root
@@ -40,7 +40,13 @@ LABEL maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke <f.zsc
       org.label-schema.name="gitblit" \
       org.label-schema.description="Gitblit is an open-source, pure Java stack for managing, viewing, and serving Git repositories." \
       org.label-schema.url="http://gitblit.com" \
-      org.label-schema.version="${GITBLIT_VERSION}"
+      org.label-schema.version="${GITBLIT_VERSION}" \
+      org.opencontainers.image.title="gitblit" \
+      org.opencontainers.image.description="Gitblit is an open-source, pure Java stack for managing, viewing, and serving Git repositories." \
+      org.opencontainers.image.url="http://gitblit.com" \
+      org.opencontainers.image.source="https://github.com/gitblit/gitblit-docker" \
+      org.opencontainers.image.documentation="https://github.com/gitblit/gitblit-docker/blob/master/hub-readme.md" \
+      org.opencontainers.image.version="${GITBLIT_VERSION}"
 
 
 ENV GITBLIT_VAR /var/opt/gitblit
