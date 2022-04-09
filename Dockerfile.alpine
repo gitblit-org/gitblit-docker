@@ -4,9 +4,9 @@ FROM openjdk:8-jre-alpine
 RUN addgroup -S -g 8117 gitblit && adduser -S -H -G gitblit -u 8117 -h /opt/gitblit gitblit
 
 
-ENV GITBLIT_VERSION 1.9.2
+ENV GITBLIT_VERSION 1.9.3
 
-ENV GITBLIT_DOWNLOAD_SHA 7c656d322160f094beddca12db7d2ea00ccfb62373c26a09c818dfb72d20d4d2
+ENV GITBLIT_DOWNLOAD_SHA b79afa05fe1765c5657b01372498698a8b7c555700005802802fe66094428492
 ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
 
 # Install su-exec to step down from root
