@@ -182,7 +182,7 @@ ENV GITBLIT_VERSION <% ${GITBLIT_VERSION} %>
 ENV GITBLIT_DOWNLOAD_SHA <% ${GITBLIT_DOWNLOAD_SHA} %>
 ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
 
-%   if [[ "$DOCKERFILE_TYPE" == alpine ]] ; then
+  % if [[ "$DOCKERFILE_TYPE" == alpine ]] ; then
 # Install su-exec to step down from root
 RUN set -eux; \
     apk add --no-cache \
@@ -205,7 +205,7 @@ RUN set -eux; \
         sed -i -e 's;bin/bash;bin/sh;' $file ; \
     done
 
-%  else
+  %  else
 # Install fetch dependencies, and gsou to step down from root
 RUN set -eux ; \
     apt-get update && apt-get install -y --no-install-recommends \
@@ -228,7 +228,7 @@ RUN set -eux ; \
     echo 'eval `dircolors -b`' >> /root/.bashrc ; \
     echo "alias ls='"'ls $LS_OPTIONS'"'" >> /root/.bashrc ; \
     echo "alias ll='"'ls $LS_OPTIONS -l'"'" >> /root/.bashrc ;
-%  fi
+  %  fi
 
 % else
 
