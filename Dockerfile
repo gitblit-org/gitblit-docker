@@ -7,7 +7,7 @@ RUN groupadd -r -g 8117 gitblit && useradd -r -M -g gitblit -u 8117 -d /opt/gitb
 ENV GITBLIT_VERSION 1.9.3
 
 ENV GITBLIT_DOWNLOAD_SHA b79afa05fe1765c5657b01372498698a8b7c555700005802802fe66094428492
-ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
+ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit-org/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
 
 # Install fetch dependencies, and gsou to step down from root
 RUN set -eux ; \
@@ -44,8 +44,8 @@ LABEL maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke <f.zsc
       org.opencontainers.image.title="gitblit" \
       org.opencontainers.image.description="Gitblit is an open-source, pure Java stack for managing, viewing, and serving Git repositories." \
       org.opencontainers.image.url="http://gitblit.com" \
-      org.opencontainers.image.source="https://github.com/gitblit/gitblit-docker" \
-      org.opencontainers.image.documentation="https://github.com/gitblit/gitblit-docker/blob/master/hub-readme.md" \
+      org.opencontainers.image.source="https://github.com/gitblit-org/gitblit-docker" \
+      org.opencontainers.image.documentation="https://github.com/gitblit-org/gitblit-docker/blob/master/hub-readme.md" \
       org.opencontainers.image.version="${GITBLIT_VERSION}"
 
 

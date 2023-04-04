@@ -172,7 +172,7 @@ printf "%s\n" ENV\ GITBLIT_VERSION\ "${GITBLIT_VERSION}"
 printf "\n"
 if [[ "$IMAGE_TYPE" == release ]] ; then
 printf "%s\n" ENV\ GITBLIT_DOWNLOAD_SHA\ "${GITBLIT_DOWNLOAD_SHA}"
-printf "%s\n" ENV\ GITBLIT_DOWNLOAD_URL\ https://github.com/gitblit/gitblit/releases/download/v\$\{GITBLIT_VERSION\}/gitblit-\$\{GITBLIT_VERSION\}.tar.gz
+printf "%s\n" ENV\ GITBLIT_DOWNLOAD_URL\ https://github.com/gitblit-org/gitblit/releases/download/v\$\{GITBLIT_VERSION\}/gitblit-\$\{GITBLIT_VERSION\}.tar.gz
 printf "\n"
   if [[ "$DOCKERFILE_TYPE" == alpine ]] ; then
 printf "%s\n" \#\ Install\ su-exec\ to\ step\ down\ from\ root
@@ -257,8 +257,8 @@ printf "%s\n" \ \ \ \ \ \ org.label-schema.version=\"\$\{GITBLIT_VERSION\}\"\ \\
 printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.title=\"gitblit\"\ \\
 printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.description=\"Gitblit\ is\ an\ open-source\,\ pure\ Java\ stack\ for\ managing\,\ viewing\,\ and\ serving\ Git\ repositories.\"\ \\
 printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.url=\"http://gitblit.com\"\ \\
-printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.source=\"https://github.com/gitblit/gitblit-docker\"\ \\
-printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.documentation=\"https://github.com/gitblit/gitblit-docker/blob/master/hub-readme.md\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.source=\"https://github.com/gitblit-org/gitblit-docker\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.documentation=\"https://github.com/gitblit-org/gitblit-docker/blob/master/hub-readme.md\"\ \\
 printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.version=\"\$\{GITBLIT_VERSION\}\"
 printf "\n"
 printf "\n"

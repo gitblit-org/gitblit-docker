@@ -180,7 +180,7 @@ ENV GITBLIT_VERSION <% ${GITBLIT_VERSION} %>
 
 % if [[ "$IMAGE_TYPE" == release ]] ; then
 ENV GITBLIT_DOWNLOAD_SHA <% ${GITBLIT_DOWNLOAD_SHA} %>
-ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
+ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit-org/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
 
   % if [[ "$DOCKERFILE_TYPE" == alpine ]] ; then
 # Install su-exec to step down from root
@@ -265,8 +265,8 @@ LABEL maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke <f.zsc
       org.opencontainers.image.title="gitblit" \
       org.opencontainers.image.description="Gitblit is an open-source, pure Java stack for managing, viewing, and serving Git repositories." \
       org.opencontainers.image.url="http://gitblit.com" \
-      org.opencontainers.image.source="https://github.com/gitblit/gitblit-docker" \
-      org.opencontainers.image.documentation="https://github.com/gitblit/gitblit-docker/blob/master/hub-readme.md" \
+      org.opencontainers.image.source="https://github.com/gitblit-org/gitblit-docker" \
+      org.opencontainers.image.documentation="https://github.com/gitblit-org/gitblit-docker/blob/master/hub-readme.md" \
       org.opencontainers.image.version="${GITBLIT_VERSION}"
 
 

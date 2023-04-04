@@ -9,7 +9,7 @@ Gitblit can be used without any other Git tooling or it can cooperate with your 
 
 [https://gitblit.com](https://gitblit.com)
 
-![logo](https://github.com/gitblit/gitblit/raw/v1.9.0/src/main/resources/gitblt2.png)
+![logo](https://github.com/gitblit-org/gitblit/raw/v1.9.0/src/main/resources/gitblt2.png)
 
 
 
@@ -198,7 +198,7 @@ Configure the gitblit instance by adding your custom settings to the file `gitbl
 
 ##### RPC `GITBLIT_RPC`
 
-Gitblit provides a [RPC interface](http://gitblit.github.io/gitblit/rpc.html) allowing a remote client to manage or administer the Gitblit server. If administration via RPC is enabled, a remote client (like the example Gitblit Manager) can be used to customize Gitblit settings. The default is to have [basic RPC enabled](http://gitblit.github.io/gitblit/rpc.html#H8) to retrieve repositories, branches, basic settings, etc. but not allow management. The `GITBLIT_RPC` environment variable can be used to control the level of RPC functionality.
+Gitblit provides a [RPC interface](http://gitblit-org.github.io/gitblit/rpc.html) allowing a remote client to manage or administer the Gitblit server. If administration via RPC is enabled, a remote client (like the example Gitblit Manager) can be used to customize Gitblit settings. The default is to have [basic RPC enabled](http://gitblit-org.github.io/gitblit/rpc.html#H8) to retrieve repositories, branches, basic settings, etc. but not allow management. The `GITBLIT_RPC` environment variable can be used to control the level of RPC functionality.
 
 * `off`: RPC is completly disabled.
 * `on`: sets `web.enableRpcServlet`to true, enables retrieving information (default).
@@ -334,7 +334,7 @@ Do *not* use the HTTP port over a network on this image for RPC, because passwor
 
 # License
 
-View [license information](https://raw.githubusercontent.com/gitblit/gitblit/master/LICENSE) for the software contained in this image.
+View [license information](https://raw.githubusercontent.com/gitblit-org/gitblit/master/LICENSE) for the software contained in this image.
 
 As with all Docker images, these likely also contain other software which may be under other licenses (such as Bash, etc from the base distribution, along with any direct or indirect dependencies of the primary software being contained).
 

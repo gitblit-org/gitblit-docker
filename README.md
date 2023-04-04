@@ -53,7 +53,7 @@ You can build your own Gitblit image with the files in this repository.
 
 ### Clone this Repository
 ```
-git clone https://github.com/gitblit/gitblit-docker.git
+git clone https://github.com/gitblit-org/gitblit-docker.git
 ```
 
 ### Build your Docker container
