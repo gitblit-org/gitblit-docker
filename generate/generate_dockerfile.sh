@@ -174,53 +174,53 @@ if [[ "$IMAGE_TYPE" == release ]] ; then
 printf "%s\n" ENV\ GITBLIT_DOWNLOAD_SHA\ "${GITBLIT_DOWNLOAD_SHA}"
 printf "%s\n" ENV\ GITBLIT_DOWNLOAD_URL\ https://github.com/gitblit/gitblit/releases/download/v\$\{GITBLIT_VERSION\}/gitblit-\$\{GITBLIT_VERSION\}.tar.gz
 printf "\n"
-if [[ "$DOCKERFILE_TYPE" == alpine ]] ; then
+  if [[ "$DOCKERFILE_TYPE" == alpine ]] ; then
 printf "%s\n" \#\ Install\ su-exec\ to\ step\ down\ from\ root
 printf "%s\n" RUN\ set\ -eux\;\ \\
-    printf "%s\n" \ \ \ \ apk\ add\ --no-cache\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ \'su-exec\>=0.2\'\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ \;\ \\
-    printf "%s\n" \ \ \ \ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ apk\ add\ --no-cache\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ \'su-exec\>=0.2\'\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ \;\ \\
+printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ Download\ and\ install\ Gitblit
-    printf "%s\n" \ \ \ \ wget\ -nv\ -O\ gitblit.tar.gz\ \$\{GITBLIT_DOWNLOAD_URL\}\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"\$\{GITBLIT_DOWNLOAD_SHA\}\ \*gitblit.tar.gz\"\ \|\ sha256sum\ -c\ -\ \;\ \\
-    printf "%s\n" \ \ \ \ mkdir\ -p\ /opt/gitblit\ \;\ \\
-    printf "%s\n" \ \ \ \ tar\ xzf\ gitblit.tar.gz\ -C\ /opt/gitblit\ --strip-components\ 1\ \;\ \\
-    printf "%s\n" \ \ \ \ rm\ -f\ gitblit.tar.gz\ \;\ \\
+printf "%s\n" \ \ \ \ wget\ -nv\ -O\ gitblit.tar.gz\ \$\{GITBLIT_DOWNLOAD_URL\}\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"\$\{GITBLIT_DOWNLOAD_SHA\}\ \*gitblit.tar.gz\"\ \|\ sha256sum\ -c\ -\ \;\ \\
+printf "%s\n" \ \ \ \ mkdir\ -p\ /opt/gitblit\ \;\ \\
+printf "%s\n" \ \ \ \ tar\ xzf\ gitblit.tar.gz\ -C\ /opt/gitblit\ --strip-components\ 1\ \;\ \\
+printf "%s\n" \ \ \ \ rm\ -f\ gitblit.tar.gz\ \;\ \\
 printf "%s\n" \#\ Remove\ unneeded\ scripts.
-    printf "%s\n" \ \ \ \ rm\ -f\ /opt/gitblit/install-service-\*.sh\ \;\ \\
-    printf "%s\n" \ \ \ \ rm\ -r\ /opt/gitblit/service-\*.sh\ \;\ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ rm\ -f\ /opt/gitblit/install-service-\*.sh\ \;\ \\
+printf "%s\n" \ \ \ \ rm\ -r\ /opt/gitblit/service-\*.sh\ \;\ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ Change\ shell\ to\ \'sh\'\ for\ Alpine
-    printf "%s\n" \ \ \ \ for\ file\ in\ /opt/gitblit/\*.sh\ \;\ do\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ sed\ -i\ -e\ \'s\;bin/bash\;bin/sh\;\'\ \$file\ \;\ \\
-    printf "%s\n" \ \ \ \ done
+printf "%s\n" \ \ \ \ for\ file\ in\ /opt/gitblit/\*.sh\ \;\ do\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ sed\ -i\ -e\ \'s\;bin/bash\;bin/sh\;\'\ \$file\ \;\ \\
+printf "%s\n" \ \ \ \ done
 printf "\n"
-else
+  else
 printf "%s\n" \#\ Install\ fetch\ dependencies\,\ and\ gsou\ to\ step\ down\ from\ root
 printf "%s\n" RUN\ set\ -eux\ \;\ \\
-    printf "%s\n" \ \ \ \ apt-get\ update\ \&\&\ apt-get\ install\ -y\ --no-install-recommends\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ wget\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ gosu\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ \;\ \\
-    printf "%s\n" \ \ \ \ rm\ -rf\ /var/lib/apt/lists/\*\ \;\ \\
+printf "%s\n" \ \ \ \ apt-get\ update\ \&\&\ apt-get\ install\ -y\ --no-install-recommends\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ wget\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ gosu\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ \;\ \\
+printf "%s\n" \ \ \ \ rm\ -rf\ /var/lib/apt/lists/\*\ \;\ \\
 printf "%s\n" \#\ Download\ and\ install\ Gitblit
-    printf "%s\n" \ \ \ \ wget\ --progress=bar:force:noscroll\ -O\ gitblit.tar.gz\ \$\{GITBLIT_DOWNLOAD_URL\}\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"\$\{GITBLIT_DOWNLOAD_SHA\}\ \*gitblit.tar.gz\"\ \|\ sha256sum\ -c\ -\ \;\ \\
-    printf "%s\n" \ \ \ \ mkdir\ -p\ /opt/gitblit\ \;\ \\
-    printf "%s\n" \ \ \ \ tar\ xzf\ gitblit.tar.gz\ -C\ /opt/gitblit\ --strip-components\ 1\ \;\ \\
-    printf "%s\n" \ \ \ \ rm\ -f\ gitblit.tar.gz\ \;\ \\
+printf "%s\n" \ \ \ \ wget\ --progress=bar:force:noscroll\ -O\ gitblit.tar.gz\ \$\{GITBLIT_DOWNLOAD_URL\}\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"\$\{GITBLIT_DOWNLOAD_SHA\}\ \*gitblit.tar.gz\"\ \|\ sha256sum\ -c\ -\ \;\ \\
+printf "%s\n" \ \ \ \ mkdir\ -p\ /opt/gitblit\ \;\ \\
+printf "%s\n" \ \ \ \ tar\ xzf\ gitblit.tar.gz\ -C\ /opt/gitblit\ --strip-components\ 1\ \;\ \\
+printf "%s\n" \ \ \ \ rm\ -f\ gitblit.tar.gz\ \;\ \\
 printf "%s\n" \#\ Remove\ unneeded\ scripts.
-    printf "%s\n" \ \ \ \ rm\ -f\ /opt/gitblit/install-service-\*.sh\ \;\ \\
-    printf "%s\n" \ \ \ \ rm\ -r\ /opt/gitblit/service-\*.sh\ \;\ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ rm\ -f\ /opt/gitblit/install-service-\*.sh\ \;\ \\
+printf "%s\n" \ \ \ \ rm\ -r\ /opt/gitblit/service-\*.sh\ \;\ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ It\ is\ getting\ annoying\ not\ to\ have\ \'ll\'\ and\ colors\ when\ opening\ a\ bash\ in\ the\ container
-    printf "%s\n" \ \ \ \ echo\ \"export\ LS_OPTIONS=\'--color=auto\'\"\ \>\>\ /root/.bashrc\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \'eval\ \`dircolors\ -b\`\'\ \>\>\ /root/.bashrc\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"alias\ ls=\'\"\'ls\ \$LS_OPTIONS\'\"\'\"\ \>\>\ /root/.bashrc\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"alias\ ll=\'\"\'ls\ \$LS_OPTIONS\ -l\'\"\'\"\ \>\>\ /root/.bashrc\ \;
-fi
+printf "%s\n" \ \ \ \ echo\ \"export\ LS_OPTIONS=\'--color=auto\'\"\ \>\>\ /root/.bashrc\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \'eval\ \`dircolors\ -b\`\'\ \>\>\ /root/.bashrc\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"alias\ ls=\'\"\'ls\ \$LS_OPTIONS\'\"\'\"\ \>\>\ /root/.bashrc\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"alias\ ll=\'\"\'ls\ \$LS_OPTIONS\ -l\'\"\'\"\ \>\>\ /root/.bashrc\ \;
+  fi
 printf "\n"
 else
 printf "\n"
@@ -228,58 +228,58 @@ printf "%s\n" ADD\ "${GITBLIT_FILE}"\ /opt/
 printf "\n"
 printf "%s\n" \#\ Install\ gosu\ to\ step\ down\ from\ root
 printf "%s\n" RUN\ set\ -eux\ \;\ \\
-    printf "%s\n" \ \ \ \ apt-get\ update\ \&\&\ apt-get\ install\ -y\ --no-install-recommends\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ gosu\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ \;\ \\
-    printf "%s\n" \ \ \ \ rm\ -rf\ /var/lib/apt/lists/\*\ \;\ \\
+printf "%s\n" \ \ \ \ apt-get\ update\ \&\&\ apt-get\ install\ -y\ --no-install-recommends\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ gosu\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ \;\ \\
+printf "%s\n" \ \ \ \ rm\ -rf\ /var/lib/apt/lists/\*\ \;\ \\
 printf "%s\n" \#\ Adjust\ folder\ name\ of\ gitblit\ unpacked\ by\ ADD\ command
-    printf "%s\n" \ \ \ \ mv\ /opt/gitblit-\*\ /opt/gitblit\ \;\ \\
+printf "%s\n" \ \ \ \ mv\ /opt/gitblit-\*\ /opt/gitblit\ \;\ \\
 printf "%s\n" \#\ Remove\ unneeded\ scripts.
-    printf "%s\n" \ \ \ \ rm\ -f\ /opt/gitblit/install-service-\*.sh\ \;\ \\
-    printf "%s\n" \ \ \ \ rm\ -r\ /opt/gitblit/service-\*.sh\ \;\ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ rm\ -f\ /opt/gitblit/install-service-\*.sh\ \;\ \\
+printf "%s\n" \ \ \ \ rm\ -r\ /opt/gitblit/service-\*.sh\ \;\ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ It\ is\ getting\ annoying\ not\ to\ have\ \'ll\'\ and\ colors\ when\ opening\ a\ bash\ in\ the\ container
-    printf "%s\n" \ \ \ \ echo\ \"export\ LS_OPTIONS=\'--color=auto\'\"\ \>\>\ /root/.bashrc\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \'eval\ \`dircolors\ -b\`\'\ \>\>\ /root/.bashrc\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"alias\ ls=\'\"\'ls\ \$LS_OPTIONS\'\"\'\"\ \>\>\ /root/.bashrc\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"alias\ ll=\'\"\'ls\ \$LS_OPTIONS\ -l\'\"\'\"\ \>\>\ /root/.bashrc\ \;
+printf "%s\n" \ \ \ \ echo\ \"export\ LS_OPTIONS=\'--color=auto\'\"\ \>\>\ /root/.bashrc\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \'eval\ \`dircolors\ -b\`\'\ \>\>\ /root/.bashrc\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"alias\ ls=\'\"\'ls\ \$LS_OPTIONS\'\"\'\"\ \>\>\ /root/.bashrc\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"alias\ ll=\'\"\'ls\ \$LS_OPTIONS\ -l\'\"\'\"\ \>\>\ /root/.bashrc\ \;
 printf "\n"
 fi
 printf "\n"
 printf "\n"
 printf "\n"
 printf "%s\n" LABEL\ maintainer=\"James\ Moger\ \<james.moger@gitblit.com\>\,\ Florian\ Zschocke\ \<f.zschocke+gitblit@gmail.com\>\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.label-schema.schema-version=\"1.0\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.label-schema.name=\"gitblit\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.label-schema.description=\"Gitblit\ is\ an\ open-source\,\ pure\ Java\ stack\ for\ managing\,\ viewing\,\ and\ serving\ Git\ repositories.\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.label-schema.url=\"http://gitblit.com\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.label-schema.version=\"\$\{GITBLIT_VERSION\}\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.title=\"gitblit\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.description=\"Gitblit\ is\ an\ open-source\,\ pure\ Java\ stack\ for\ managing\,\ viewing\,\ and\ serving\ Git\ repositories.\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.url=\"http://gitblit.com\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.source=\"https://github.com/gitblit/gitblit-docker\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.documentation=\"https://github.com/gitblit/gitblit-docker/blob/master/hub-readme.md\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.version=\"\$\{GITBLIT_VERSION\}\"
+printf "%s\n" \ \ \ \ \ \ org.label-schema.schema-version=\"1.0\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.label-schema.name=\"gitblit\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.label-schema.description=\"Gitblit\ is\ an\ open-source\,\ pure\ Java\ stack\ for\ managing\,\ viewing\,\ and\ serving\ Git\ repositories.\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.label-schema.url=\"http://gitblit.com\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.label-schema.version=\"\$\{GITBLIT_VERSION\}\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.title=\"gitblit\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.description=\"Gitblit\ is\ an\ open-source\,\ pure\ Java\ stack\ for\ managing\,\ viewing\,\ and\ serving\ Git\ repositories.\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.url=\"http://gitblit.com\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.source=\"https://github.com/gitblit/gitblit-docker\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.documentation=\"https://github.com/gitblit/gitblit-docker/blob/master/hub-readme.md\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.version=\"\$\{GITBLIT_VERSION\}\"
 printf "\n"
 printf "\n"
 printf "%s\n" ENV\ GITBLIT_VAR\ "${GITBLIT_VAR}"
 printf "\n"
 printf "%s\n" \#\ Move\ the\ data\ files\ to\ a\ separate\ directory\ and\ set\ some\ defaults
 printf "%s\n" RUN\ set\ -eux\ \;\ \\
-    printf "%s\n" \ \ \ \ mkdir\ -p\ -m\ 0775\ \$GITBLIT_VAR\ \;\ \\
-    printf "%s\n" \ \ \ \ gbetc=\$GITBLIT_VAR/etc\ \;\ \\
-    printf "%s\n" \ \ \ \ gbsrv=\$GITBLIT_VAR/srv\ \;\ \\
-    printf "%s\n" \ \ \ \ mkdir\ -p\ -m\ 0775\ \$gbsrv\ \;\ \\
-    printf "%s\n" \ \ \ \ mv\ /opt/gitblit/data/git\ \$gbsrv\ \;\ \\
-    printf "%s\n" \ \ \ \ ln\ -s\ \$gbsrv/git\ /opt/gitblit/data/git\ \;\ \\
-    printf "%s\n" \ \ \ \ mv\ /opt/gitblit/data\ \$gbetc\ \;\ \\
-    printf "%s\n" \ \ \ \ ln\ -s\ \$gbetc\ /opt/gitblit/data\ \;\ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ mkdir\ -p\ -m\ 0775\ \$GITBLIT_VAR\ \;\ \\
+printf "%s\n" \ \ \ \ gbetc=\$GITBLIT_VAR/etc\ \;\ \\
+printf "%s\n" \ \ \ \ gbsrv=\$GITBLIT_VAR/srv\ \;\ \\
+printf "%s\n" \ \ \ \ mkdir\ -p\ -m\ 0775\ \$gbsrv\ \;\ \\
+printf "%s\n" \ \ \ \ mv\ /opt/gitblit/data/git\ \$gbsrv\ \;\ \\
+printf "%s\n" \ \ \ \ ln\ -s\ \$gbsrv/git\ /opt/gitblit/data/git\ \;\ \\
+printf "%s\n" \ \ \ \ mv\ /opt/gitblit/data\ \$gbetc\ \;\ \\
+printf "%s\n" \ \ \ \ ln\ -s\ \$gbetc\ /opt/gitblit/data\ \;\ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ Make\ sure\ that\ the\ most\ current\ default\ properties\ file\ is\ available
 printf "%s\n" \#\ unedited\ to\ Gitblit.
-    printf "%s\n" \ \ \ \ mkdir\ -p\ /opt/gitblit/etc/\ \;\ \\
-    printf "%s\n" \ \ \ \ mv\ \$gbetc/defaults.properties\ /opt/gitblit/etc\ \;\ \\
-    printf "%s\n" \ \ \ \ printf\ \"\\
+printf "%s\n" \ \ \ \ mkdir\ -p\ /opt/gitblit/etc/\ \;\ \\
+printf "%s\n" \ \ \ \ mv\ \$gbetc/defaults.properties\ /opt/gitblit/etc\ \;\ \\
+printf "%s\n" \ \ \ \ printf\ \"\\
 printf "%s\n" 6\ c\\\\\\n\\
 printf "%s\n" \\\\\\n\\
 printf "%s\n" \\\\\\n\\
@@ -299,29 +299,29 @@ printf "%s\n" /\^#\ The\ temporary\ folder\ to\ decompress/\,/\^server.tempFolde
 printf "%s\n" s/\^server.httpPort.\*/#server.httpPort\ =\ 8080/\\n\\
 printf "%s\n" s/\^server.httpsPort.\*/#server.httpsPort\ =\ 8443/\\n\\
 printf "%s\n" s/\^server.redirectToHttpsPort.\*/#server.redirectToHttpsPort\ =\ true/\\n\\
-    printf "%s\n" \ \ \ \ \"\ \>\ /tmp/defaults.sed\ \;\ \\
-    printf "%s\n" \ \ \ \ sed\ -f\ /tmp/defaults.sed\ /opt/gitblit/etc/defaults.properties\ \>\ \$gbetc/defaults.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ rm\ -f\ /tmp/defaults.sed\ \;\ \\
+printf "%s\n" \ \ \ \ \"\ \>\ /tmp/defaults.sed\ \;\ \\
+printf "%s\n" \ \ \ \ sed\ -f\ /tmp/defaults.sed\ /opt/gitblit/etc/defaults.properties\ \>\ \$gbetc/defaults.properties\ \;\ \\
+printf "%s\n" \ \ \ \ rm\ -f\ /tmp/defaults.sed\ \;\ \\
 printf "%s\n" \#\ \ \ Check\ that\ removal\ worked
-    printf "%s\n" \ \ \ \ grep\ \ \"\^git.repositoriesFolder\"\ \$gbetc/defaults.properties\ \&\&\ false\ \;\ \\
-    printf "%s\n" \ \ \ \ grep\ \ \"\^filestore.storageFolder\"\ \$gbetc/defaults.properties\ \&\&\ false\ \;\ \\
-    printf "%s\n" \ \ \ \ grep\ \ \"\^tickets.indexFolder\"\ \$gbetc/defaults.properties\ \&\&\ false\ \;\ \\
-    printf "%s\n" \ \ \ \ grep\ \ \"\^federation.proposalsFolder\"\ \$gbetc/defaults.properties\ \&\&\ false\ \;\ \\
-    printf "%s\n" \ \ \ \ grep\ \ \"\^server.tempFolder\"\ \$gbetc/defaults.properties\ \&\&\ false\ \;\ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ grep\ \ \"\^git.repositoriesFolder\"\ \$gbetc/defaults.properties\ \&\&\ false\ \;\ \\
+printf "%s\n" \ \ \ \ grep\ \ \"\^filestore.storageFolder\"\ \$gbetc/defaults.properties\ \&\&\ false\ \;\ \\
+printf "%s\n" \ \ \ \ grep\ \ \"\^tickets.indexFolder\"\ \$gbetc/defaults.properties\ \&\&\ false\ \;\ \\
+printf "%s\n" \ \ \ \ grep\ \ \"\^federation.proposalsFolder\"\ \$gbetc/defaults.properties\ \&\&\ false\ \;\ \\
+printf "%s\n" \ \ \ \ grep\ \ \"\^server.tempFolder\"\ \$gbetc/defaults.properties\ \&\&\ false\ \;\ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ Create\ a\ system.properties\ file\ that\ sets\ the\ defaults\ for\ this\ docker\ setup.
 printf "%s\n" \#\ This\ is\ not\ available\ outside\ and\ should\ not\ be\ changed.
-    printf "%s\n" \ \ \ \ echo\ \"git.repositoriesFolder\ =\ \$\{gbsrv\}/git\"\ \>\ \ /opt/gitblit/etc/system.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"filestore.storageFolder\ =\ \$\{gbsrv\}/lfs\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"tickets.indexFolder\ =\ \$\{gbsrv\}/tickets/lucene\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"federation.proposalsFolder\ =\ \$\{gbsrv\}/fedproposals\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"server.tempFolder\ =\ \$\{GITBLIT_VAR\}/temp/gitblit\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"server.httpPort\ =\ 8080\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"server.httpsPort\ =\ 8443\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ echo\ \"server.redirectToHttpsPort\ =\ true\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ echo\ \"git.repositoriesFolder\ =\ \$\{gbsrv\}/git\"\ \>\ \ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"filestore.storageFolder\ =\ \$\{gbsrv\}/lfs\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"tickets.indexFolder\ =\ \$\{gbsrv\}/tickets/lucene\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"federation.proposalsFolder\ =\ \$\{gbsrv\}/fedproposals\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"server.tempFolder\ =\ \$\{GITBLIT_VAR\}/temp/gitblit\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"server.httpPort\ =\ 8080\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"server.httpsPort\ =\ 8443\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"server.redirectToHttpsPort\ =\ true\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ Create\ a\ properties\ file\ for\ settings\ that\ can\ be\ set\ via\ environment\ variables\ from\ docker
-    printf "%s\n" \ \ \ \ printf\ \'\\
+printf "%s\n" \ \ \ \ printf\ \'\\
 printf "%s\n" \'\'#\\n\\
 printf "%s\n" \'\'#\ GITBLIT-DOCKER.PROPERTIES\\n\\
 printf "%s\n" \'\'#\\n\\
@@ -336,15 +336,15 @@ printf "%s\n" \'\'#\ Do\ NOT\ change\ this\ include\ line.\ It\ makes\ sure\ tha
 printf "%s\n" \'\'#\\n\\
 printf "%s\n" include\ =\ /opt/gitblit/etc/defaults.properties\,/opt/gitblit/etc/system.properties\\n\\
 printf "%s\n" \\n\'\ \>\ \$gbetc/gitblit-docker.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ Comment\ out\ settings\ in\ defaults\ that\ we\ support\ to\ override\ in\ gitblit-docker.properties
-    printf "%s\n" \ \ \ \ sed\ -i\ -e\ \'s/\^\\\(web.enableRpcServlet.\*\\\)/#\\1/\'\ \\
-           printf "%s\n" \ \ \ \ \ \ \ \ \ \ \ -e\ \'s/\^\\\(web.enableRpcManagement.\*\\\)/#\\1/\'\ \\
-           printf "%s\n" \ \ \ \ \ \ \ \ \ \ \ -e\ \'s/\^\\\(web.enableRpcAdministration.\*\\\)/#\\1/\'\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ \$gbetc/defaults.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ sed\ -i\ -e\ \'s/\^\\\(web.enableRpcServlet.\*\\\)/#\\1/\'\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ \ \ \ -e\ \'s/\^\\\(web.enableRpcManagement.\*\\\)/#\\1/\'\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ \ \ \ -e\ \'s/\^\\\(web.enableRpcAdministration.\*\\\)/#\\1/\'\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ \$gbetc/defaults.properties\ \;\ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ Create\ the\ gitblit.properties\ file\ that\ the\ user\ can\ use\ for\ customization.
-    printf "%s\n" \ \ \ \ printf\ \'\\
+printf "%s\n" \ \ \ \ printf\ \'\\
 printf "%s\n" \'\'#\\n\\
 printf "%s\n" \'\'#\ GITBLIT.PROPERTIES\\n\\
 printf "%s\n" \'\'#\\n\\
@@ -367,22 +367,22 @@ printf "%s\n" \'\'#\\n\\
 printf "%s\n" \'\'#\ Define\ your\ overrides\ or\ custom\ settings\ below\\n\\
 printf "%s\n" \'\'#\\n\\
 printf "%s\n" \\n\'\ \>\ \$gbetc/gitblit.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ Change\ ownership\ to\ gitblit\ user\ for\ all\ files\ that\ the\ process\ needs\ to\ write
-    printf "%s\n" \ \ \ \ chown\ -R\ gitblit:gitblit\ \$GITBLIT_VAR\ \;\ \\
+printf "%s\n" \ \ \ \ chown\ -R\ gitblit:gitblit\ \$GITBLIT_VAR\ \;\ \\
 printf "%s\n" \#\ Set\ file\ permissions\ so\ that\ gitblit\ can\ read\ all\ and\ others\ cannot\ mess\ up
 printf "%s\n" \#\ or\ read\ private\ data
-    printf "%s\n" \ \ \ \ chmod\ ug+rwxs\ \$gbsrv\ \$gbsrv/git\ \;\ \\
-    printf "%s\n" \ \ \ \ chmod\ ug+rwxs\ \$gbetc\ \$gbetc/certs\ \;\ \\
-    printf "%s\n" \ \ \ \ chmod\ go=r\ \$gbetc/defaults.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ chmod\ 0664\ \$gbetc/gitblit-docker.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ chmod\ 0664\ \$gbetc/gitblit.properties\ \;\ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ chmod\ ug+rwxs\ \$gbsrv\ \$gbsrv/git\ \;\ \\
+printf "%s\n" \ \ \ \ chmod\ ug+rwxs\ \$gbetc\ \$gbetc/certs\ \;\ \\
+printf "%s\n" \ \ \ \ chmod\ go=r\ \$gbetc/defaults.properties\ \;\ \\
+printf "%s\n" \ \ \ \ chmod\ 0664\ \$gbetc/gitblit-docker.properties\ \;\ \\
+printf "%s\n" \ \ \ \ chmod\ 0664\ \$gbetc/gitblit.properties\ \;\ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ Now\ we\ make\ a\ backup\ of\ the\ etc\ files\,\ so\ that\ we\ can\ copy\ them\ to\ mount\ bound
 printf "%s\n" \#\ volumes\ to\ make\ sure\ all\ needed\ files\ are\ present\ in\ them.
-    printf "%s\n" \ \ \ \ cp\ -a\ \$gbetc\ /opt/gitblit/vog-etc\ \;\ \\
-    printf "%s\n" \ \ \ \ cp\ -a\ \$gbsrv/git/project.mkd\ /opt/gitblit/srv-project.mkd\ \;
+printf "%s\n" \ \ \ \ cp\ -a\ \$gbetc\ /opt/gitblit/vog-etc\ \;\ \\
+printf "%s\n" \ \ \ \ cp\ -a\ \$gbsrv/git/project.mkd\ /opt/gitblit/srv-project.mkd\ \;
 printf "\n"
 printf "\n"
 if [[ "$DOCKERFILE_TYPE" != alpine && "$DOCKERFILE_TYPE" != ubuntu ]] ; then
@@ -404,24 +404,24 @@ printf "%s\n" COPY\ --from=base\ \$\{GITBLIT_VAR\}\ \$\{GITBLIT_VAR\}
 printf "\n"
 printf "%s\n" \#\ Install\ su-exec\ to\ step\ down\ from\ root
 printf "%s\n" RUN\ set\ -eux\;\ \\
-    printf "%s\n" \ \ \ \ apk\ add\ --no-cache\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ \'su-exec\>=0.2\'\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ \;\ \\
-    printf "%s\n" \ \ \ \ \\
-    printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ apk\ add\ --no-cache\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ \'su-exec\>=0.2\'\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ \;\ \\
+printf "%s\n" \ \ \ \ \\
+printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ Change\ shell\ to\ \'sh\'\ for\ Alpine
-    printf "%s\n" \ \ \ \ for\ file\ in\ /opt/gitblit/\*.sh\ \;\ do\ \\
-        printf "%s\n" \ \ \ \ \ \ \ \ sed\ -i\ -e\ \'s\;bin/bash\;bin/sh\;\'\ \$file\ \;\ \\
-    printf "%s\n" \ \ \ \ done
+printf "%s\n" \ \ \ \ for\ file\ in\ /opt/gitblit/\*.sh\ \;\ do\ \\
+printf "%s\n" \ \ \ \ \ \ \ \ sed\ -i\ -e\ \'s\;bin/bash\;bin/sh\;\'\ \$file\ \;\ \\
+printf "%s\n" \ \ \ \ done
 printf "\n"
 printf "\n"
 printf "\n"
 printf "%s\n" LABEL\ maintainer=\"James\ Moger\ \<james.moger@gitblit.com\>\,\ Florian\ Zschocke\ \<f.zschocke+gitblit@gmail.com\>\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.label-schema.schema-version=\"1.0\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.label-schema.name=\"gitblit\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.label-schema.description=\"Gitblit\ is\ an\ open-source\,\ pure\ Java\ stack\ for\ managing\,\ viewing\,\ and\ serving\ Git\ repositories.\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.label-schema.url=\"http://gitblit.com\"\ \\
-      printf "%s\n" \ \ \ \ \ \ org.label-schema.version=\"\$\{GITBLIT_VERSION\}\"
+printf "%s\n" \ \ \ \ \ \ org.label-schema.schema-version=\"1.0\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.label-schema.name=\"gitblit\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.label-schema.description=\"Gitblit\ is\ an\ open-source\,\ pure\ Java\ stack\ for\ managing\,\ viewing\,\ and\ serving\ Git\ repositories.\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.label-schema.url=\"http://gitblit.com\"\ \\
+printf "%s\n" \ \ \ \ \ \ org.label-schema.version=\"\$\{GITBLIT_VERSION\}\"
 printf "\n"
 printf "\n"
 printf "\n"
