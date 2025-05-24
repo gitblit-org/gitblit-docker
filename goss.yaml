@@ -41,6 +41,8 @@ file:
       and:
         - {ge: 446}
         - {le: 464}
+    contents:
+      - "container.dockerfileVersion = "
 
   /var/opt/gitblit/etc/gitblit-docker.properties:
     filetype: file
@@ -48,7 +50,7 @@ file:
     mode: "0664"
     owner: gitblit
     group: gitblit
-    contains:
+    contents:
       - "include = /opt/gitblit/etc/defaults.properties,/opt/gitblit/etc/system.properties"
 
   /var/opt/gitblit/etc/gitblit.properties:
@@ -57,14 +59,14 @@ file:
     mode: "0664"
     owner: gitblit
     group: gitblit
-    contains:
+    contents:
       - "include = gitblit-docker.properties"
 
   # Check container log if the Gitblit output reached the follwing lines
   # and has no warnings or errors.
   /goss/docker_output.log:
     exists: true
-    contains:
+    contents:
       - "All managers started"
       - "Started Wicket"
       - "!Failed"
