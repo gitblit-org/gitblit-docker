@@ -123,6 +123,8 @@ parse_args() {
 # Some global defines
 #
 
+GITBLIT_DOCKERFILE_VERSION=1.2.0
+
 GITBLIT_VAR=/var/opt/gitblit
 : ${GITBLIT_FILE:=gitblit-*-SNAPSHOT.tar.gz}
 
@@ -311,7 +313,10 @@ printf "%s\n" \ \ \ \ grep\ \ \"\^server.tempFolder\"\ \$gbetc/defaults.properti
 printf "%s\n" \ \ \ \ \\
 printf "%s\n" \#\ Create\ a\ system.properties\ file\ that\ sets\ the\ defaults\ for\ this\ docker\ setup.
 printf "%s\n" \#\ This\ is\ not\ available\ outside\ and\ should\ not\ be\ changed.
-printf "%s\n" \ \ \ \ echo\ \"git.repositoriesFolder\ =\ \$\{gbsrv\}/git\"\ \>\ \ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"container.dockerfileVersion\ =\ "${GITBLIT_DOCKERFILE_VERSION}"\"\ \>\ \ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"container.dockerfileType\ =\ "${DOCKERFILE_TYPE:=ubuntu}"\"\ \>\>\ \ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"container.imageType\ =\ "${IMAGE_TYPE}"\"\ \>\>\ \ /opt/gitblit/etc/system.properties\ \;\ \\
+printf "%s\n" \ \ \ \ echo\ \"git.repositoriesFolder\ =\ \$\{gbsrv\}/git\"\ \>\>\ \ /opt/gitblit/etc/system.properties\ \;\ \\
 printf "%s\n" \ \ \ \ echo\ \"filestore.storageFolder\ =\ \$\{gbsrv\}/lfs\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
 printf "%s\n" \ \ \ \ echo\ \"tickets.indexFolder\ =\ \$\{gbsrv\}/tickets/lucene\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\
 printf "%s\n" \ \ \ \ echo\ \"federation.proposalsFolder\ =\ \$\{gbsrv\}/fedproposals\"\ \>\>\ /opt/gitblit/etc/system.properties\ \;\ \\

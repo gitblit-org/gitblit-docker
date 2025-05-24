@@ -35,9 +35,12 @@ file:
     filetype: file
     exists: true
     mode: "0644"
-    size: 353
     owner: root
     group: root
+    size:
+      and:
+        - {ge: 446}
+        - {le: 464}
 
   /var/opt/gitblit/etc/gitblit-docker.properties:
     filetype: file

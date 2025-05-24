@@ -126,6 +126,8 @@ parse_args() {
 % #
 %
 
+GITBLIT_DOCKERFILE_VERSION=1.2.0
+
 GITBLIT_VAR=/var/opt/gitblit
 : ${GITBLIT_FILE:=gitblit-*-SNAPSHOT.tar.gz}
 
@@ -319,7 +321,10 @@ s/^server.redirectToHttpsPort.*/#server.redirectToHttpsPort = true/\n\
     \
 # Create a system.properties file that sets the defaults for this docker setup.
 # This is not available outside and should not be changed.
-    echo "git.repositoriesFolder = ${gbsrv}/git" >  /opt/gitblit/etc/system.properties ; \
+    echo "container.dockerfileVersion = <% ${GITBLIT_DOCKERFILE_VERSION} %>" >  /opt/gitblit/etc/system.properties ; \
+    echo "container.dockerfileType = <% ${DOCKERFILE_TYPE:=ubuntu} %>" >>  /opt/gitblit/etc/system.properties ; \
+    echo "container.imageType = <% ${IMAGE_TYPE} %>" >>  /opt/gitblit/etc/system.properties ; \
+    echo "git.repositoriesFolder = ${gbsrv}/git" >>  /opt/gitblit/etc/system.properties ; \
     echo "filestore.storageFolder = ${gbsrv}/lfs" >> /opt/gitblit/etc/system.properties ; \
     echo "tickets.indexFolder = ${gbsrv}/tickets/lucene" >> /opt/gitblit/etc/system.properties ; \
     echo "federation.proposalsFolder = ${gbsrv}/fedproposals" >> /opt/gitblit/etc/system.properties ; \
