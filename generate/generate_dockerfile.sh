@@ -123,7 +123,7 @@ parse_args() {
 # Some global defines
 #
 
-GITBLIT_DOCKERFILE_VERSION=1.2.0
+GITBLIT_DOCKERFILE_VERSION=1.2.1
 
 GITBLIT_VAR=/var/opt/gitblit
 : ${GITBLIT_FILE:=gitblit-*-SNAPSHOT.tar.gz}
@@ -170,11 +170,11 @@ printf "%s\n" RUN\ groupadd\ -r\ -g\ 8117\ gitblit\ \&\&\ useradd\ -r\ -M\ -g\ g
 fi
 printf "\n"
 printf "\n"
-printf "%s\n" ENV\ GITBLIT_VERSION\ "${GITBLIT_VERSION}"
+printf "%s\n" ENV\ GITBLIT_VERSION="${GITBLIT_VERSION}"
 printf "\n"
 if [[ "$IMAGE_TYPE" == release ]] ; then
-printf "%s\n" ENV\ GITBLIT_DOWNLOAD_SHA\ "${GITBLIT_DOWNLOAD_SHA}"
-printf "%s\n" ENV\ GITBLIT_DOWNLOAD_URL\ https://github.com/gitblit-org/gitblit/releases/download/v\$\{GITBLIT_VERSION\}/gitblit-\$\{GITBLIT_VERSION\}.tar.gz
+printf "%s\n" ENV\ GITBLIT_DOWNLOAD_SHA="${GITBLIT_DOWNLOAD_SHA}"
+printf "%s\n" ENV\ GITBLIT_DOWNLOAD_URL=https://github.com/gitblit-org/gitblit/releases/download/v\$\{GITBLIT_VERSION\}/gitblit-\$\{GITBLIT_VERSION\}.tar.gz
 printf "\n"
   if [[ "$DOCKERFILE_TYPE" == alpine ]] ; then
 printf "%s\n" \#\ Install\ su-exec\ to\ step\ down\ from\ root
@@ -264,7 +264,7 @@ printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.documentation=\"https://githu
 printf "%s\n" \ \ \ \ \ \ org.opencontainers.image.version=\"\$\{GITBLIT_VERSION\}\"
 printf "\n"
 printf "\n"
-printf "%s\n" ENV\ GITBLIT_VAR\ "${GITBLIT_VAR}"
+printf "%s\n" ENV\ GITBLIT_VAR="${GITBLIT_VAR}"
 printf "\n"
 printf "%s\n" \#\ Move\ the\ data\ files\ to\ a\ separate\ directory\ and\ set\ some\ defaults
 printf "%s\n" RUN\ set\ -eux\ \;\ \\
@@ -400,8 +400,8 @@ printf "%s\n" \#\ add\ our\ user\ and\ group\ first\ to\ make\ sure\ their\ IDs\
 printf "%s\n" RUN\ addgroup\ -S\ -g\ 8117\ gitblit\ \&\&\ adduser\ -S\ -H\ -G\ gitblit\ -u\ 8117\ -h\ /opt/gitblit\ gitblit
 printf "\n"
 printf "\n"
-printf "%s\n" ENV\ GITBLIT_VERSION\ "${GITBLIT_VERSION}"
-printf "%s\n" ENV\ GITBLIT_VAR\ "${GITBLIT_VAR}"
+printf "%s\n" ENV\ GITBLIT_VERSION="${GITBLIT_VERSION}"
+printf "%s\n" ENV\ GITBLIT_VAR="${GITBLIT_VAR}"
 printf "\n"
 printf "\n"
 printf "%s\n" COPY\ --from=base\ /opt/gitblit\ /opt/gitblit
@@ -437,8 +437,8 @@ printf "\n"
 printf "\n"
 printf "%s\n" \#\ Setup\ the\ Docker\ container\ environment
 printf "%s\n" ARG\ GITBLIT_RPC
-printf "%s\n" ENV\ GITBLIT_RPC\ \$\{GITBLIT_RPC:-on\}
-printf "%s\n" ENV\ PATH\ /opt/gitblit:\$PATH
+printf "%s\n" ENV\ GITBLIT_RPC=\$\{GITBLIT_RPC:-on\}
+printf "%s\n" ENV\ PATH=/opt/gitblit:\$PATH
 printf "\n"
 printf "%s\n" WORKDIR\ /opt/gitblit
 printf "\n"
@@ -473,8 +473,8 @@ printf "\n"
 printf "\n"
 printf "%s\n" \#\ Setup\ the\ Docker\ container\ environment
 printf "%s\n" ARG\ GITBLIT_RPC
-printf "%s\n" ENV\ GITBLIT_RPC\ \$\{GITBLIT_RPC:-on\}
-printf "%s\n" ENV\ PATH\ /opt/gitblit:\$PATH
+printf "%s\n" ENV\ GITBLIT_RPC=\$\{GITBLIT_RPC:-on\}
+printf "%s\n" ENV\ PATH=/opt/gitblit:\$PATH
 printf "\n"
 printf "%s\n" WORKDIR\ /opt/gitblit
 printf "\n"

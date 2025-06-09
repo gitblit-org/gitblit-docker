@@ -126,7 +126,7 @@ parse_args() {
 % #
 %
 
-GITBLIT_DOCKERFILE_VERSION=1.2.0
+GITBLIT_DOCKERFILE_VERSION=1.2.1
 
 GITBLIT_VAR=/var/opt/gitblit
 : ${GITBLIT_FILE:=gitblit-*-SNAPSHOT.tar.gz}
@@ -178,11 +178,11 @@ RUN groupadd -r -g 8117 gitblit && useradd -r -M -g gitblit -u 8117 -d /opt/gitb
 % fi
 
 
-ENV GITBLIT_VERSION <% ${GITBLIT_VERSION} %>
+ENV GITBLIT_VERSION=<% ${GITBLIT_VERSION} %>
 
 % if [[ "$IMAGE_TYPE" == release ]] ; then
-ENV GITBLIT_DOWNLOAD_SHA <% ${GITBLIT_DOWNLOAD_SHA} %>
-ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit-org/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
+ENV GITBLIT_DOWNLOAD_SHA=<% ${GITBLIT_DOWNLOAD_SHA} %>
+ENV GITBLIT_DOWNLOAD_URL=https://github.com/gitblit-org/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
 
   % if [[ "$DOCKERFILE_TYPE" == alpine ]] ; then
 # Install su-exec to step down from root
@@ -272,7 +272,7 @@ LABEL maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke <f.zsc
       org.opencontainers.image.version="${GITBLIT_VERSION}"
 
 
-ENV GITBLIT_VAR <% ${GITBLIT_VAR} %>
+ENV GITBLIT_VAR=<% ${GITBLIT_VAR} %>
 
 # Move the data files to a separate directory and set some defaults
 RUN set -eux ; \
@@ -411,8 +411,8 @@ FROM openjdk:8-jre-alpine AS alpine
 RUN addgroup -S -g 8117 gitblit && adduser -S -H -G gitblit -u 8117 -h /opt/gitblit gitblit
 
 
-ENV GITBLIT_VERSION <% ${GITBLIT_VERSION} %>
-ENV GITBLIT_VAR <% ${GITBLIT_VAR} %>
+ENV GITBLIT_VERSION=<% ${GITBLIT_VERSION} %>
+ENV GITBLIT_VAR=<% ${GITBLIT_VAR} %>
 
 
 COPY --from=base /opt/gitblit /opt/gitblit
@@ -448,8 +448,8 @@ COPY migrate/non-etc-files migrate/defaults.* /usr/local/share/gitblit/
 
 # Setup the Docker container environment
 ARG GITBLIT_RPC
-ENV GITBLIT_RPC ${GITBLIT_RPC:-on}
-ENV PATH /opt/gitblit:$PATH
+ENV GITBLIT_RPC=${GITBLIT_RPC:-on}
+ENV PATH=/opt/gitblit:$PATH
 
 WORKDIR /opt/gitblit
 
@@ -484,8 +484,8 @@ COPY migrate/non-etc-files migrate/defaults.* /usr/local/share/gitblit/
 
 # Setup the Docker container environment
 ARG GITBLIT_RPC
-ENV GITBLIT_RPC ${GITBLIT_RPC:-on}
-ENV PATH /opt/gitblit:$PATH
+ENV GITBLIT_RPC=${GITBLIT_RPC:-on}
+ENV PATH=/opt/gitblit:$PATH
 
 WORKDIR /opt/gitblit
 
