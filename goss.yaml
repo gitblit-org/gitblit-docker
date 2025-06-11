@@ -102,26 +102,26 @@ process:
 
 
 port:
-  tcp:8080:
+  tcp6:8080:
     listening: true
     ip:
-      - 0.0.0.0
-  tcp:8081:
+      - "::"
+  tcp6:8081:
     listening: true
     ip:
       - 127.0.0.1
-  tcp:8443:
+  tcp6:8443:
     listening: true
     ip:
-      - 0.0.0.0
-  tcp:9418:
+      - "::"
+  tcp6:9418:
     listening: true
     ip:
-      - 0.0.0.0
-  tcp:29418:
+      - "::"
+  tcp6:29418:
     listening: true
     ip:
-      - 0.0.0.0
+      - "::"
 
 
 http:

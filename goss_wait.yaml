@@ -1,9 +1,9 @@
 port:
-  tcp:8080:
+  tcp6:8080:
     listening: true
     ip:
-      - 0.0.0.0
-  tcp:8081:
+      - "::"
+  tcp6:8081:
     listening: true
     ip:
       - 127.0.0.1
@@ -12,3 +12,12 @@ port:
 process:
   java:
     running: true
+
+# Check container log if the Gitblit output reached the following lines
+# and has no warnings or errors.
+file:
+  /goss/docker_output.log:
+    exists: true
+    contents:
+      - "All managers started"
+      - "Started Wicket"
