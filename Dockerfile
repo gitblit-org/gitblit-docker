@@ -4,10 +4,10 @@ FROM openjdk:8-jre-slim
 RUN groupadd -r -g 8117 gitblit && useradd -r -M -g gitblit -u 8117 -d /opt/gitblit gitblit
 
 
-ENV GITBLIT_VERSION 1.9.3
+ENV GITBLIT_VERSION=1.10.0
 
-ENV GITBLIT_DOWNLOAD_SHA b79afa05fe1765c5657b01372498698a8b7c555700005802802fe66094428492
-ENV GITBLIT_DOWNLOAD_URL https://github.com/gitblit-org/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
+ENV GITBLIT_DOWNLOAD_SHA=584d8ab046d52b7575ed928497de81beb3abd6d44f689075dac6fe2580561bbd
+ENV GITBLIT_DOWNLOAD_URL=https://github.com/gitblit-org/gitblit/releases/download/v${GITBLIT_VERSION}/gitblit-${GITBLIT_VERSION}.tar.gz
 
 # Install fetch dependencies, and gsou to step down from root
 RUN set -eux ; \
@@ -49,7 +49,7 @@ LABEL maintainer="James Moger <james.moger@gitblit.com>, Florian Zschocke <f.zsc
       org.opencontainers.image.version="${GITBLIT_VERSION}"
 
 
-ENV GITBLIT_VAR /var/opt/gitblit
+ENV GITBLIT_VAR=/var/opt/gitblit
 
 # Move the data files to a separate directory and set some defaults
 RUN set -eux ; \
@@ -98,7 +98,10 @@ s/^server.redirectToHttpsPort.*/#server.redirectToHttpsPort = true/\n\
     \
 # Create a system.properties file that sets the defaults for this docker setup.
 # This is not available outside and should not be changed.
-    echo "git.repositoriesFolder = ${gbsrv}/git" >  /opt/gitblit/etc/system.properties ; \
+    echo "container.dockerfileVersion = 1.2.1" >  /opt/gitblit/etc/system.properties ; \
+    echo "container.dockerfileType = ubuntu" >>  /opt/gitblit/etc/system.properties ; \
+    echo "container.imageType = release" >>  /opt/gitblit/etc/system.properties ; \
+    echo "git.repositoriesFolder = ${gbsrv}/git" >>  /opt/gitblit/etc/system.properties ; \
     echo "filestore.storageFolder = ${gbsrv}/lfs" >> /opt/gitblit/etc/system.properties ; \
     echo "tickets.indexFolder = ${gbsrv}/tickets/lucene" >> /opt/gitblit/etc/system.properties ; \
     echo "federation.proposalsFolder = ${gbsrv}/fedproposals" >> /opt/gitblit/etc/system.properties ; \
@@ -180,8 +183,8 @@ COPY migrate/non-etc-files migrate/defaults.* /usr/local/share/gitblit/
 
 # Setup the Docker container environment
 ARG GITBLIT_RPC
-ENV GITBLIT_RPC ${GITBLIT_RPC:-on}
-ENV PATH /opt/gitblit:$PATH
+ENV GITBLIT_RPC=${GITBLIT_RPC:-on}
+ENV PATH=/opt/gitblit:$PATH
 
 WORKDIR /opt/gitblit
 
